@@ -1,22 +1,22 @@
-from flask_sqlalchemy import SQLAlchemy
-from datetime import date
+from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy.ext.declarative import declarative_base
 
-db = SQLAlchemy()
+Base = declarative_base()
 
-class Fahrschueler(db.Model):
+class Fahrschueler(Base):
     __tablename__ = 'fahrschueler'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    vorname = db.Column(db.String(100), nullable=False)
-    nachname = db.Column(db.String(100), nullable=False)
-    geburtsdatum = db.Column(db.Date, nullable=False)
-    adresse = db.Column(db.String(200), nullable=False)
-    plz = db.Column(db.String(10), nullable=False)
-    ort = db.Column(db.String(100), nullable=False)
-    mobilnummer = db.Column(db.String(20), nullable=True)
-    sehhilfe = db.Column(db.Boolean, default=False)
-    theorie_bestanden = db.Column(db.Boolean, default=False)
-    erstellt_am = db.Column(db.Date, default=date.today)
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    vorname = Column(String, nullable=False)
+    nachname = Column(String, nullable=False)
+    geburtsdatum = Column(String, nullable=False)
+    adresse = Column(String, nullable=False)
+    plz = Column(String, nullable=False)
+    ort = Column(String, nullable=False)
+    mobilnummer = Column(String, nullable=False)
+    sehhilfe = Column(Boolean, default=False)
+    theorie_bestanden = Column(Boolean, default=False)
+    geschlecht = Column(String, nullable=True)  # Optional: z. B. „männlich“, „weiblich“, „divers“
 
     def __repr__(self):
         return f"<Fahrschueler {self.vorname} {self.nachname}>"
