@@ -40,3 +40,32 @@ CREATE TABLE schueler (
     theorie_bestanden BOOLEAN DEFAULT FALSE,
     erstellt_am TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Tabelle für die Grundstufe
+CREATE TABLE grundstufe (
+    id SERIAL PRIMARY KEY,
+    schueler_id INTEGER REFERENCES schueler(id),
+    einsteigen BOOLEAN,
+    sitz_einstellen BOOLEAN,
+    spiegel_einstellen BOOLEAN,
+    lenkrad_einstellen BOOLEAN,
+    kopfstuetze_einstellen BOOLEAN,
+    lenkradhaltung BOOLEAN,
+    pedale BOOLEAN,
+    gurt_anlegen BOOLEAN,
+    schalthebel BOOLEAN,
+    zuendschloss BOOLEAN,
+    motor_starten BOOLEAN,
+    anfahren_anhalt BOOLEAN,
+    hoch_1_2 BOOLEAN,
+    hoch_2_3 BOOLEAN,
+    hoch_3_4 BOOLEAN,
+    hoch_4_5 BOOLEAN,
+    hoch_5_6 BOOLEAN,
+    runter_4_3 BOOLEAN,
+    runter_3_2 BOOLEAN,
+    runter_2_1 BOOLEAN,
+    ueber_4_2 BOOLEAN,
+    ueber_4_1 BOOLEAN,
+    ueber_3_1 BOOLEAN
+);
