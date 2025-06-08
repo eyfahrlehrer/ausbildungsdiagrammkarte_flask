@@ -42,3 +42,21 @@ class User(Base):
     password_hash = Column(String, nullable=False)
     rolle = Column(String, nullable=False)  # z. B. 'superadmin', 'fahrlehrer'
     erstellt_am = Column(DateTime, default=datetime.datetime.utcnow)
+
+class Schueler(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    vorname = db.Column(db.String(100))
+    geburtsdatum = db.Column(db.String(50))
+    adresse = db.Column(db.String(200))
+    telefon = db.Column(db.String(50))
+    sehhilfe = db.Column(db.Boolean)
+
+class Fahrstundenprotokoll(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    schueler_id = db.Column(db.Integer, db.ForeignKey('schueler.id'))
+    datum = db.Column(db.String(50))
+    inhalt = db.Column(db.Text)
+    dauer_minuten = db.Column(db.Integer)
+    erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
+
