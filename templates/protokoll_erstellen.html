@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Fahrstundenprotokoll erstellen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div class="max-w-3xl mx-auto p-6 bg-white shadow-md mt-10 rounded-xl">
+        <h1 class="text-2xl font-semibold mb-6">📝 Fahrstundenprotokoll erstellen</h1>
+
+        <form method="POST">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-medium">Datum</label>
+                    <input type="date" name="datum" class="w-full border rounded px-3 py-2 mt-1" required>
+                </div>
+
+                <div>
+                    <label class="block font-medium">Dauer (Minuten)</label>
+                    <input type="number" name="dauer_minuten" class="w-full border rounded px-3 py-2 mt-1" min="1" required>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block font-medium">Inhalt der Fahrstunde</label>
+                    <textarea name="inhalt" rows="3" class="w-full border rounded px-3 py-2 mt-1" placeholder="z. B. Grundstufe: Anfahren, Schalten, Rechts vor Links..." required></textarea>
+                </div>
+
+                <div>
+                    <label class="block font-medium">Schaltkompetenz (B197)</label>
+                    <input type="checkbox" name="schaltkompetenz" class="mt-2">
+                </div>
+
+                <div>
+                    <label class="block font-medium">Sonderfahrt-Typ</label>
+                    <select name="sonderfahrt_typ" class="w-full border rounded px-3 py-2 mt-1">
+                        <option value="">– keine –</option>
+                        <option value="Überland">Überland</option>
+                        <option value="Autobahn">Autobahn</option>
+                        <option value="Dämmerung">Dämmerung</option>
+                    </select>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block font-medium">Zusätzliche Notiz</label>
+                    <textarea name="notiz" rows="2" class="w-full border rounded px-3 py-2 mt-1" placeholder="Freitext: Auffälligkeiten, Fortschritt, etc."></textarea>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-between">
+                <a href="/profil/{{ schueler_id }}" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">🔙 Zurück</a>
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">💾 Speichern</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
