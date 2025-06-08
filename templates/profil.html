@@ -1,47 +1,53 @@
+<!-- templates/profil.html -->
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Profil – Fahrschüler {{ schueler_id }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Profil – Ausbildungsdiagrammkarte</title>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 text-gray-800">
-    <div class="max-w-5xl mx-auto p-6 mt-10 bg-white shadow-md rounded-xl">
-        <h1 class="text-2xl font-bold mb-6">📘 Ausbildungsprofil – Schüler-ID {{ schueler_id }}</h1>
+<body class="bg-gray-100">
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-64 h-screen bg-white shadow-md p-4 hidden md:block">
+            <h2 class="text-xl font-bold mb-4">Navigation</h2>
+            <nav>
+                <a href="/grundstufe/{{ schueler.id }}" class="block py-2">Grundstufe</a>
+                <a href="/aufbaustufe/{{ schueler.id }}" class="block py-2">Aufbaustufe</a>
+                <a href="/leistungsstufe/{{ schueler.id }}" class="block py-2">Leistungsstufe</a>
+                <a href="/sonderfahrten/{{ schueler.id }}" class="block py-2">Sonderfahrten</a>
+                <a href="/grundfahraufgaben/{{ schueler.id }}" class="block py-2">Grundfahraufgaben</a>
+                <a href="/reifestufe/{{ schueler.id }}" class="block py-2">Reifestufe</a>
+                <a href="/technik/{{ schueler.id }}" class="block py-2">Technik</a>
+            </nav>
+        </aside>
 
-        <a href="/protokoll_erstellen/{{ schueler_id }}"
-           class="mb-6 inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            ➕ Neue Fahrstunde eintragen
-        </a>
+        <!-- Hauptinhalt -->
+        <main class="flex-1 p-6">
+            <h1 class="text-3xl font-bold mb-4">Profil von {{ schueler.vorname }} {{ schueler.name }}</h1>
 
-        {% if eintraege %}
-            <table class="w-full border mt-4 text-sm">
-                <thead class="bg-gray-200">
-                    <tr>
-                        <th class="px-3 py-2">📅 Datum</th>
-                        <th class="px-3 py-2">📝 Inhalt</th>
-                        <th class="px-3 py-2">⏱️ Dauer</th>
-                        <th class="px-3 py-2">🚘 Schalt?</th>
-                        <th class="px-3 py-2">🛣️ Sonderfahrt</th>
-                        <th class="px-3 py-2">🗒️ Notiz</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for eintrag in eintraege %}
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="px-3 py-2">{{ eintrag.datum }}</td>
-                        <td class="px-3 py-2">{{ eintrag.inhalt }}</td>
-                        <td class="px-3 py-2">{{ eintrag.dauer_minuten }} Min</td>
-                        <td class="px-3 py-2">{{ '✅' if eintrag.schaltkompetenz else '' }}</td>
-                        <td class="px-3 py-2">{{ eintrag.sonderfahrt_typ or '-' }}</td>
-                        <td class="px-3 py-2">{{ eintrag.notiz or '-' }}</td>
-                    </tr>
+            <section class="bg-white p-4 rounded shadow mb-6">
+                <h2 class="text-xl font-semibold mb-2">Stammdaten</h2>
+                <p><strong>Geburtsdatum:</strong> {{ schueler.geburtsdatum }}</p>
+                <p><strong>Adresse:</strong> {{ schueler.adresse }}</p>
+                <p><strong>Telefon:</strong> {{ schueler.telefon }}</p>
+                <p><strong>Sehhilfe:</strong> {{ schueler.sehhilfe }}</p>
+            </section>
+
+            <section class="bg-white p-4 rounded shadow mb-6">
+                <h2 class="text-xl font-semibold mb-2">Fahrstundenprotokoll</h2>
+                {% for eintrag in protokolle %}
+                    <div class="border-b py-2">
+                        <strong>{{ eintrag.datum }}:</strong> {{ eintrag.inhalt }} ({{ eintrag.dauer_minuten }} min)
+                    </div>
+                {% else %}
+                    <p>Keine Einträge vorhanden.</p>
                 {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p class="mt-4 text-gray-500">Noch keine Fahrstunden dokumentiert.</p>
-        {% endif %}
+            </section>
+
+            <a href="/protokoll_neu/{{ schueler.id }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">➕ Protokoll hinzufügen</a>
+        </main>
     </div>
 </body>
 </html>
