@@ -80,27 +80,34 @@ def profil(schueler_id):
 
 @app.route("/protokoll_neu/<int:schueler_id>", methods=["GET", "POST"])
 def protokoll_neu(schueler_id):
-    conn = get_db_connection()
-    
+    schueler = Schueler.query.get_or_404(schueler_id)
+
     if request.method == "POST":
         datum = request.form["datum"]
         inhalt = request.form["inhalt"]
-        dauer = request.form["dauer_minuten"]
-        schalt = request.form.get("schaltkompetenz") == "on"
-        sonder = request.form.get("sonderfahrt_typ")
-        notiz = request.form.get("notiz")
+        dauer = int(request.form["dauer_minuten"])
+        schalt = "schaltkompetenz" in request.form
+        sonder = request.form.get("sonderfahrt_typ", "")
+        notiz = request.form.get("notiz", "")
 
-        conn.execute(
-            "INSERT INTO fahrstundenprotokoll (schueler_id, datum, inhalt, dauer_minuten, schaltkompetenz, sonderfahrt_typ, notiz) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (schueler_id, datum, inhalt, dauer, schalt, sonder, notiz)
+        eintrag = Fahrstundenprotokoll(
+            schueler_id=schueler.id,
+            datum=datum,
+            inhalt=inhalt,
+            dauer_minuten=dauer,
+            schaltkompetenz=schalt,
+            sonderfahrt_typ=sonder,
+            notiz=notiz,
+            erstellt_am=datetime.utcnow()
         )
-        conn.commit()
-        conn.close()
-        return redirect(f"/profil/{schueler_id}")
-    
-    schueler = conn.execute("SELECT * FROM schueler WHERE id = ?", (schueler_id,)).fetchone()
-    conn.close()
-    return render_template("protokoll_erstellen.html", schueler_id=schueler_id, schueler=schueler)
+
+        db.session.add(eintrag)
+        db.session.commit()
+
+        return redirect(url_for("profil", schueler_id=schueler.id))
+
+    return render_template("protokoll_erstellen.html", schueler=schueler)
+
 
 # ---------------------- Hauptausführung ----------------------
 
