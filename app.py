@@ -108,6 +108,23 @@ def protokoll_neu(schueler_id):
 
     return render_template("protokoll_erstellen.html", schueler=schueler)
 
+@app.route("/protokoll_bearbeiten/<int:protokoll_id>", methods=["GET", "POST"])
+def protokoll_bearbeiten(protokoll_id):
+    eintrag = Fahrstundenprotokoll.query.get_or_404(protokoll_id)
+    schueler = Schueler.query.get_or_404(eintrag.schueler_id)
+
+    if request.method == "POST":
+        eintrag.datum = request.form["datum"]
+        eintrag.inhalt = request.form["inhalt"]
+        eintrag.dauer_minuten = int(request.form["dauer_minuten"])
+        eintrag.schaltkompetenz = "schaltkompetenz" in request.form
+        eintrag.sonderfahrt_typ = request.form.get("sonderfahrt_typ", "")
+        eintrag.notiz = request.form.get("notiz", "")
+
+        db.session.commit()
+        return redirect(url_for("profil", schueler_id=schueler.id))
+
+    return render_template("protokoll_bearbeiten.html", eintrag=eintrag, schueler=schueler)
 
 # ---------------------- Hauptausführung ----------------------
 
