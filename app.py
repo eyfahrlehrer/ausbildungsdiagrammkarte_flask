@@ -76,7 +76,25 @@ def dashboard():
 def profil(schueler_id):
     schueler = Schueler.query.get_or_404(schueler_id)
     protokolle = Fahrstundenprotokoll.query.filter_by(schueler_id=schueler_id).all()
-    return render_template("profil.html", schueler=schueler, protokolle=protokolle)
+
+    # Fortschrittslogik
+    schalt_anzahl = Fahrstundenprotokoll.query.filter_by(schueler_id=schueler_id, schaltkompetenz=True).count()
+    schalt_prozent = min(int((schalt_anzahl / 10) * 100), 100)
+
+    ueberland = Fahrstundenprotokoll.query.filter_by(schueler_id=schueler_id, sonderfahrt_typ="Überland").count()
+    autobahn = Fahrstundenprotokoll.query.filter_by(schueler_id=schueler_id, sonderfahrt_typ="Autobahn").count()
+    daemmerung = Fahrstundenprotokoll.query.filter_by(schueler_id=schueler_id, sonderfahrt_typ="Dämmerung").count()
+
+    return render_template(
+        "profil.html",
+        schueler=schueler,
+        protokolle=protokolle,
+        schalt_anzahl=schalt_anzahl,
+        schalt_prozent=schalt_prozent,
+        ueberland=ueberland,
+        autobahn=autobahn,
+        daemmerung=daemmerung
+    )
 
 @app.route("/protokoll_neu/<int:schueler_id>", methods=["GET", "POST"])
 def protokoll_neu(schueler_id):
