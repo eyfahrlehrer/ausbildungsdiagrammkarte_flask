@@ -32,21 +32,16 @@ def index():
 # Login
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    error = None
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
         if username in users and check_password_hash(users[username], password):
             session["username"] = username
             return redirect(url_for("index"))
-        return "❌ Ungültige Zugangsdaten!"
-    return """
-        <h2>Login</h2>
-        <form method='post'>
-            <input name='username' placeholder='Benutzername'><br>
-            <input name='password' type='password' placeholder='Passwort'><br>
-            <button type='submit'>Login</button>
-        </form>
-    """
+        error = "❌ Ungültige Zugangsdaten!"
+    return render_template("login.html", error=error)
+
 
 # Logout
 @app.route("/logout")
