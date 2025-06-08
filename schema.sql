@@ -24,3 +24,11 @@ CREATE TABLE fahrstundenprotokoll (
     notiz TEXT,
     erstellt_am TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    rolle VARCHAR(20) NOT NULL,
+    erstellt_am TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
