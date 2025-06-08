@@ -75,7 +75,7 @@ def dashboard():
 @app.route("/profil/<int:schueler_id>")
 def profil(schueler_id):
     schueler = Schueler.query.get_or_404(schueler_id)
-    protokolle = Fahrstundenprotokoll.query.filter_by(schueler_id=schueler_id).order_by(Fahrstundenprotokoll.datum.desc()).all()
+    protokolle = Fahrstundenprotokoll.query.filter_by(schueler_id=schueler_id).all()
     return render_template("profil.html", schueler=schueler, protokolle=protokolle)
 
 # ---------------------- Hauptausführung ----------------------
