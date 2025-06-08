@@ -1,82 +1,84 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from sqlalchemy import create_engine
-from models import User
-from sqlalchemy.orm import sessionmaker
-from models import Fahrstundenprotokoll, Base
 import os
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "fallback-secret")
+app.secret_key = os.getenv("SECRET_KEY", "fallback-secret-key")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL").replace("postgres://", "postgresql://", 1)
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# Dummy-Benutzer
-users = {
-    "admin": generate_password_hash("admin123"),
-    "fahrlehrer": generate_password_hash("passwort123")
-}
+db = SQLAlchemy(app)
 
-# Datenbankverbindung (PostgreSQL auf Railway)
-DATABASE_URL = os.environ.get("DATABASE_URL")
-engine = create_engine(DATABASE_URL)
-Base.metadata.bind = engine
-DBSession = sessionmaker(bind=engine)
-session_db = DBSession()
+# ---------------------- Datenbankmodelle ----------------------
 
-# Startseite
+class Rolle(db.Model):
+    __tablename__ = "rollen"
+    id = db.Column(db.Integer, primary_key=True)
+    bezeichnung = db.Column(db.String(50), unique=True, nullable=False)
+
+class User(db.Model):
+    __tablename__ = "users"
+    id = db.Column(db.Integer, primary_key=True)
+    nutzername = db.Column(db.String(50), unique=True, nullable=False)
+    passwort_hash = db.Column(db.Text, nullable=False)
+    rolle_id = db.Column(db.Integer, db.ForeignKey('rollen.id'), nullable=False)
+    erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Schueler(db.Model):
+    __tablename__ = "schueler"
+    id = db.Column(db.Integer, primary_key=True)
+    vorname = db.Column(db.String(50))
+    name = db.Column(db.String(50))
+    geburtsdatum = db.Column(db.String(50))
+    adresse = db.Column(db.String(100))
+    telefon = db.Column(db.String(30))
+    sehhilfe = db.Column(db.String(10))
+
+class Fahrstundenprotokoll(db.Model):
+    __tablename__ = "fahrstundenprotokoll"
+    id = db.Column(db.Integer, primary_key=True)
+    schueler_id = db.Column(db.Integer, db.ForeignKey("schueler.id"), nullable=False)
+    datum = db.Column(db.String(50), nullable=False)
+    inhalt = db.Column(db.Text, nullable=False)
+    dauer_minuten = db.Column(db.Integer, nullable=False)
+    schaltkompetenz = db.Column(db.Boolean, default=False)
+    sonderfahrt_typ = db.Column(db.String(50))
+    notiz = db.Column(db.Text)
+    erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
+
+# ---------------------- Routen ----------------------
+
 @app.route("/")
-def index():
-    if 'username' in session:
-        return f"✅ Willkommen {session['username']}! <a href='/logout'>Logout</a>"
+def home():
     return redirect(url_for("login"))
-
-# Login
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    error = None
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-        user = session_db.query(User).filter_by(username=username).first()
-        if user and check_password_hash(user.password_hash, password):
-            session["username"] = user.username
-            session["rolle"] = user.rolle
-            return redirect(url_for("index"))
-        error = "❌ Ungültige Zugangsdaten!"
-    return render_template("login.html", error=error)
+        nutzername = request.form["nutzername"]
+        passwort = request.form["passwort"]
+        benutzer = User.query.filter_by(nutzername=nutzername).first()
+        if benutzer and check_password_hash(benutzer.passwort_hash, passwort):
+            session["user_id"] = benutzer.id
+            session["rolle_id"] = benutzer.rolle_id
+            return redirect(url_for("dashboard"))
+        else:
+            return "Login fehlgeschlagen"
+    return render_template("login.html")
 
+@app.route("/dashboard")
+def dashboard():
+    return "Dashboard – Zugang erfolgreich"
 
+@app.route("/profil/<int:schueler_id>")
+def profil(schueler_id):
+    schueler = Schueler.query.get_or_404(schueler_id)
+    protokolle = Fahrstundenprotokoll.query.filter_by(schueler_id=schueler_id).order_by(Fahrstundenprotokoll.datum.desc()).all()
+    return render_template("profil.html", schueler=schueler, protokolle=protokolle)
 
-# Logout
-@app.route("/logout")
-def logout():
-    session.pop("username", None)
-    return redirect(url_for("login"))
+# ---------------------- Hauptausführung ----------------------
 
-# Protokoll erstellen
-@app.route("/protokoll_erstellen/<int:schueler_id>", methods=["GET", "POST"])
-def protokoll_erstellen(schueler_id):
-    if request.method == "POST":
-        datum = request.form["datum"]
-        inhalt = request.form["inhalt"]
-        dauer = int(request.form["dauer_minuten"])
-        schaltkompetenz = "schaltkompetenz" in request.form
-        sonderfahrt_typ = request.form.get("sonderfahrt_typ")
-        notiz = request.form.get("notiz")
-        erstellt_am = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-        eintrag = Fahrstundenprotokoll(
-            schueler_id=schueler_id,
-            datum=datum,
-            inhalt=inhalt,
-            dauer_minuten=dauer,
-            schaltkompetenz=schaltkompetenz,
-            sonderfahrt_typ=sonderfahrt_typ,
-            notiz=notiz,
-            erstellt_am=erstellt_am
-        )
-        session_db.add(eintrag)
-        session_db.commit()
-        return redirect(url_for("profil", schueler_id=schueler_id))
-    
+if __name__ == "__main__":
+    app.run(debug=True)
