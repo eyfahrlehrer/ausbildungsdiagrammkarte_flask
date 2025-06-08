@@ -8,59 +8,77 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
-    <div class="flex">
-        <!-- Sidebar -->
-        <aside class="w-64 h-screen bg-white shadow-md p-4 hidden md:block">
-            <h2 class="text-xl font-bold mb-4">Navigation</h2>
-            <nav>
-                <a href="/grundstufe/{{ schueler.id }}" class="block py-2">Grundstufe</a>
-                <a href="/aufbaustufe/{{ schueler.id }}" class="block py-2">Aufbaustufe</a>
-                <a href="/leistungsstufe/{{ schueler.id }}" class="block py-2">Leistungsstufe</a>
-                <a href="/sonderfahrten/{{ schueler.id }}" class="block py-2">Sonderfahrten</a>
-                <a href="/grundfahraufgaben/{{ schueler.id }}" class="block py-2">Grundfahraufgaben</a>
-                <a href="/reifestufe/{{ schueler.id }}" class="block py-2">Reifestufe</a>
-                <a href="/technik/{{ schueler.id }}" class="block py-2">Technik</a>
-            </nav>
-        </aside>
+<div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-64 h-screen bg-white shadow-md p-4 hidden md:block">
+        <h2 class="text-xl font-bold mb-4">Navigation</h2>
+        <nav>
+            <a href="/grundstufe/{{ schueler.id }}" class="block py-2">Grundstufe</a>
+            <a href="/aufbaustufe/{{ schueler.id }}" class="block py-2">Aufbaustufe</a>
+            <a href="/leistungsstufe/{{ schueler.id }}" class="block py-2">Leistungsstufe</a>
+            <a href="/sonderfahrten/{{ schueler.id }}" class="block py-2">Sonderfahrten</a>
+            <a href="/grundfahraufgaben/{{ schueler.id }}" class="block py-2">Grundfahraufgaben</a>
+            <a href="/reifestufe/{{ schueler.id }}" class="block py-2">Reifestufe</a>
+            <a href="/technik/{{ schueler.id }}" class="block py-2">Technik</a>
+        </nav>
+    </aside>
 
-        <!-- Hauptinhalt -->
-        <main class="flex-1 p-6">
-            <h1 class="text-3xl font-bold mb-4">Profil von {{ schueler.vorname }} {{ schueler.name }}</h1>
+    <!-- Hauptinhalt -->
+    <main class="flex-1 p-6">
+        <h1 class="text-3xl font-bold mb-4">Profil von {{ schueler.vorname }} {{ schueler.name }}</h1>
 
-            <!-- Stammdaten -->
-            <section class="bg-white p-4 rounded shadow mb-6">
-                <h2 class="text-xl font-semibold mb-2">Stammdaten</h2>
-                <p><strong>Geburtsdatum:</strong> {{ schueler.geburtsdatum }}</p>
-                <p><strong>Adresse:</strong> {{ schueler.adresse }}</p>
-                <p><strong>Telefon:</strong> {{ schueler.telefon }}</p>
-                <p><strong>Sehhilfe:</strong> {{ "Ja" if schueler.sehhilfe else "Nein" }}</p>
-            </section>
+        <!-- Stammdaten -->
+        <section class="bg-white p-4 rounded shadow mb-6">
+            <h2 class="text-xl font-semibold mb-2">Stammdaten</h2>
+            <p><strong>Geburtsdatum:</strong> {{ schueler.geburtsdatum }}</p>
+            <p><strong>Adresse:</strong> {{ schueler.adresse }}</p>
+            <p><strong>Telefon:</strong> {{ schueler.telefon }}</p>
+            <p><strong>Sehhilfe:</strong> {{ "Ja" if schueler.sehhilfe else "Nein" }}</p>
+        </section>
 
-            <!-- Protokolle -->
-            <section class="bg-white p-4 rounded shadow mb-6">
-                <h2 class="text-xl font-semibold mb-4">Fahrstundenprotokoll</h2>
-                {% if protokolle %}
-                    {% for eintrag in protokolle %}
-                        <div class="border-b py-2 flex justify-between items-center">
-                            <div>
-                                <strong>{{ eintrag.datum }}:</strong> {{ eintrag.inhalt }} ({{ eintrag.dauer_minuten }} min)
-                            </div>
-                            <div class="flex space-x-2">
-                                <a href="/protokoll_bearbeiten/{{ eintrag.id }}" class="text-sm text-blue-600 underline">Bearbeiten</a>
-                                <form action="/protokoll_loeschen/{{ eintrag.id }}" method="post" onsubmit="return confirm('Eintrag wirklich löschen?')">
-                                    <button type="submit" class="text-sm text-red-600">🗑️ Löschen</button>
-                                </form>
-                            </div>
+        <!-- Fortschrittsbox -->
+        <section class="bg-white p-4 rounded shadow mb-6">
+            <h2 class="text-xl font-semibold mb-2">📊 Ausbildungs-Fortschritt</h2>
+
+            <div class="mb-4">
+                <label class="block font-medium mb-1">Schaltkompetenz (B197): {{ schalt_anzahl }}/10</label>
+                <div class="w-full bg-gray-200 rounded-full h-4">
+                    <div class="bg-green-500 h-4 rounded-full" style="width: {{ schalt_prozent }}%;"></div>
+                </div>
+            </div>
+
+            <div>
+                <p>🚗 Überlandfahrten: {{ ueberland }}/5</p>
+                <p>🛣️ Autobahnfahrten: {{ autobahn }}/4</p>
+                <p>🌙 Dämmerungsfahrten: {{ daemmerung }}/3</p>
+            </div>
+        </section>
+
+        <!-- Fahrstundenprotokoll -->
+        <section class="bg-white p-4 rounded shadow mb-6">
+            <h2 class="text-xl font-semibold mb-4">Fahrstundenprotokoll</h2>
+            {% if protokolle %}
+                {% for eintrag in protokolle %}
+                    <div class="border-b py-2 flex justify-between items-center">
+                        <div>
+                            <strong>{{ eintrag.datum }}:</strong> {{ eintrag.inhalt }} ({{ eintrag.dauer_minuten }} min)
                         </div>
-                    {% endfor %}
-                {% else %}
-                    <p>Keine Einträge vorhanden.</p>
-                {% endif %}
-            </section>
+                        <div class="flex space-x-2">
+                            <a href="/protokoll_bearbeiten/{{ eintrag.id }}" class="text-sm text-blue-600 underline">Bearbeiten</a>
+                            <form action="/protokoll_loeschen/{{ eintrag.id }}" method="post" onsubmit="return confirm('Eintrag wirklich löschen?')">
+                                <button type="submit" class="text-sm text-red-600">🗑️ Löschen</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Keine Einträge vorhanden.</p>
+            {% endif %}
+        </section>
 
-            <!-- Button hinzufügen -->
-            <a href="/protokoll_neu/{{ schueler.id }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">➕ Protokoll hinzufügen</a>
-        </main>
-    </div>
+        <!-- Button hinzufügen -->
+        <a href="/protokoll_neu/{{ schueler.id }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">➕ Protokoll hinzufügen</a>
+    </main>
+</div>
 </body>
 </html>
