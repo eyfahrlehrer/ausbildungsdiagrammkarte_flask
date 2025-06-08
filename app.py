@@ -152,6 +152,42 @@ def protokoll_loeschen(protokoll_id):
     db.session.commit()
     return redirect(url_for("profil", schueler_id=schueler_id))
 
+from flask import Flask, render_template, request, redirect, url_for
+from models import db, Grundstufe, Schueler
+from sqlalchemy.orm.exc import NoResultFound
+
+app = Flask(__name__)
+
+# --- ROUTE: Grundstufe anzeigen + speichern ---
+@app.route('/grundstufe/<int:schueler_id>', methods=['GET', 'POST'])
+def grundstufe(schueler_id):
+    schueler = Schueler.query.get_or_404(schueler_id)
+
+    try:
+        eintrag = Grundstufe.query.filter_by(schueler_id=schueler_id).one()
+    except NoResultFound:
+        eintrag = None
+
+    if request.method == 'POST':
+        daten = {feld: (feld in request.form) for feld in [
+            'einsteigen', 'sitz_einstellen', 'spiegel_einstellen', 'lenkrad_einstellen', 'kopfstuetze_einstellen',
+            'lenkradhaltung', 'pedale', 'gurt_anlegen', 'schalthebel', 'zuendschloss', 'motor_starten', 'anfahren_anhalt',
+            'hoch_1_2', 'hoch_2_3', 'hoch_3_4', 'hoch_4_5', 'hoch_5_6',
+            'runter_4_3', 'runter_3_2', 'runter_2_1',
+            'ueber_4_2', 'ueber_4_1', 'ueber_3_1']}
+
+        if eintrag:
+            for feld, wert in daten.items():
+                setattr(eintrag, feld, wert)
+        else:
+            eintrag = Grundstufe(schueler_id=schueler_id, **daten)
+            db.session.add(eintrag)
+
+        db.session.commit()
+        return redirect(url_for('profil', schueler_id=schueler_id))
+
+    return render_template('grundstufe.html', schueler=schueler, eintrag=eintrag)
+
 
 # ---------------------- Hauptausführung ----------------------
 
