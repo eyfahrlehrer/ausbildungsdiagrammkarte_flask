@@ -48,7 +48,9 @@
 
             <a href="/protokoll_neu/{{ schueler.id }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">➕ Protokoll hinzufügen</a>
             <a href="/protokoll_bearbeiten/{{ eintrag.id }}" class="text-sm text-blue-600 underline ml-2">Bearbeiten</a>
-
+            <form action="/protokoll_loeschen/{{ eintrag.id }}" method="post" style="display:inline;">
+            <button type="submit" onclick="return confirm('Eintrag wirklich löschen?')" class="text-red-600 ml-2">🗑️ Löschen</button>
+</form>
         </main>
     </div>
 </body>
