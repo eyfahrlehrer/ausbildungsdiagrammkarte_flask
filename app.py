@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from sqlalchemy import create_engine
+from models import User
 from sqlalchemy.orm import sessionmaker
 from models import Fahrstundenprotokoll, Base
 import os
@@ -30,17 +31,21 @@ def index():
     return redirect(url_for("login"))
 
 # Login
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     error = None
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        if username in users and check_password_hash(users[username], password):
-            session["username"] = username
+        user = session_db.query(User).filter_by(username=username).first()
+        if user and check_password_hash(user.password_hash, password):
+            session["username"] = user.username
+            session["rolle"] = user.rolle
             return redirect(url_for("index"))
         error = "❌ Ungültige Zugangsdaten!"
     return render_template("login.html", error=error)
+
 
 
 # Logout
