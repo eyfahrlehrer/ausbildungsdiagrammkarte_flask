@@ -69,3 +69,27 @@ CREATE TABLE grundstufe (
     ueber_4_1 BOOLEAN,
     ueber_3_1 BOOLEAN
 );
+
+CREATE TABLE aufbaustufe (
+    id SERIAL PRIMARY KEY,
+    schueler_id INTEGER REFERENCES schueler(id),
+    rollen_schalten BOOLEAN,
+    abbremsen_schalten BOOLEAN,
+    bremsen_degressiv BOOLEAN,
+    bremsen_ziel BOOLEAN,
+    bremsen_gefahr BOOLEAN,
+    gefaelle_anfahren BOOLEAN,
+    gefaelle_anhalten BOOLEAN,
+    gefaelle_rueckwaerts BOOLEAN,
+    gefaelle_sichern BOOLEAN,
+    gefaelle_schalten BOOLEAN,
+    steig_anfahren BOOLEAN,
+    steig_anhalten BOOLEAN,
+    steig_rueckwaerts BOOLEAN,
+    steig_sichern BOOLEAN,
+    steig_schalten BOOLEAN,
+    tastgeschwindigkeit BOOLEAN,
+    bedienung_kontrolle BOOLEAN,
+    oertliche_besonderheiten BOOLEAN,
+    erstellt_am TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
