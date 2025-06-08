@@ -20,3 +20,17 @@ class Fahrschueler(Base):
 
     def __repr__(self):
         return f"<Fahrschueler {self.vorname} {self.nachname}>"
+
+class Fahrstundenprotokoll(Base):
+    __tablename__ = 'fahrstundenprotokoll'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    schueler_id = Column(Integer, nullable=False)  # Verknüpft mit Fahrschueler.id
+    datum = Column(String, nullable=False)
+    inhalt = Column(String, nullable=False)
+    dauer_minuten = Column(Integer, nullable=False)
+    schaltkompetenz = Column(Boolean, default=False)  # z. B. für B197
+    sonderfahrt_typ = Column(String, nullable=True)  # z. B. Überland, Autobahn
+    notiz = Column(String, nullable=True)
+    erstellt_am = Column(String, nullable=False)
+
