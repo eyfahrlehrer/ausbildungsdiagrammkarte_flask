@@ -189,6 +189,8 @@ def grundstufe(schueler_id):
     return render_template('grundstufe.html', schueler=schueler, eintrag=eintrag)
 
 
+
+
 # ---------------------- Hauptausführung ----------------------
 
 if __name__ == "__main__":
