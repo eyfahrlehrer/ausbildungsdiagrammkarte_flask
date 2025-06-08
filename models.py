@@ -34,3 +34,10 @@ class Fahrstundenprotokoll(Base):
     notiz = Column(String, nullable=True)
     erstellt_am = Column(String, nullable=False)
 
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True)
+    username = Column(String, unique=True, nullable=False)
+    password_hash = Column(String, nullable=False)
+    rolle = Column(String, nullable=False)  # z. B. 'superadmin', 'fahrlehrer'
+    erstellt_am = Column(DateTime, default=datetime.datetime.utcnow)
