@@ -5,7 +5,7 @@ CREATE TABLE rollen (
 );
 
 -- Benutzer (Login-System)
-CREATE TABLE benutzer (
+CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     nutzername VARCHAR(50) NOT NULL UNIQUE,
     passwort_hash TEXT NOT NULL,
