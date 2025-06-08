@@ -110,3 +110,6 @@ def profil(schueler_id):
 
     return render_template("profil.html", schueler_id=schueler_id, eintraege=eintraege)
 
+@app.route("/")
+def home():
+    return "App läuft! 🎉"
