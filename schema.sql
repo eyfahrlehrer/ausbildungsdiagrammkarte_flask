@@ -12,3 +12,15 @@ CREATE TABLE benutzer (
     rolle_id INTEGER NOT NULL REFERENCES rollen(id),
     erstellt_am TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE fahrstundenprotokoll (
+    id SERIAL PRIMARY KEY,
+    schueler_id INTEGER NOT NULL,
+    datum VARCHAR(50) NOT NULL,
+    inhalt TEXT NOT NULL,
+    dauer_minuten INTEGER NOT NULL,
+    schaltkompetenz BOOLEAN DEFAULT FALSE,
+    sonderfahrt_typ VARCHAR(50),
+    notiz TEXT,
+    erstellt_am TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
