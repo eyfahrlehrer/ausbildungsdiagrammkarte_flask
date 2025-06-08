@@ -187,7 +187,62 @@ def grundstufe(schueler_id):
         return redirect(url_for('profil', schueler_id=schueler_id))
 
     return render_template('grundstufe.html', schueler=schueler, eintrag=eintrag)
+    
 
+@app.route('/aufbaustufe/<int:schueler_id>', methods=['GET', 'POST'])
+def aufbaustufe(schueler_id):
+    conn = psycopg2.connect(DATABASE_URL)
+    cur = conn.cursor()
+
+    if request.method == 'POST':
+        daten = {
+            'rollen_schalten': request.form.get('rollen_schalten') == 'on',
+            'abbremsen_schalten': request.form.get('abbremsen_schalten') == 'on',
+            'bremsen_degressiv': request.form.get('bremsen_degressiv') == 'on',
+            'bremsen_ziel': request.form.get('bremsen_ziel') == 'on',
+            'bremsen_gefahr': request.form.get('bremsen_gefahr') == 'on',
+            'gefaelle_anfahren': request.form.get('gefaelle_anfahren') == 'on',
+            'gefaelle_anhalten': request.form.get('gefaelle_anhalten') == 'on',
+            'gefaelle_rueckwaerts': request.form.get('gefaelle_rueckwaerts') == 'on',
+            'gefaelle_sichern': request.form.get('gefaelle_sichern') == 'on',
+            'gefaelle_schalten': request.form.get('gefaelle_schalten') == 'on',
+            'steig_anfahren': request.form.get('steig_anfahren') == 'on',
+            'steig_anhalten': request.form.get('steig_anhalten') == 'on',
+            'steig_rueckwaerts': request.form.get('steig_rueckwaerts') == 'on',
+            'steig_sichern': request.form.get('steig_sichern') == 'on',
+            'steig_schalten': request.form.get('steig_schalten') == 'on',
+            'tastgeschwindigkeit': request.form.get('tastgeschwindigkeit') == 'on',
+            'bedienung_kontrolle': request.form.get('bedienung_kontrolle') == 'on',
+            'oertliche_besonderheiten': request.form.get('oertliche_besonderheiten') == 'on',
+        }
+
+        cur.execute("""
+            INSERT INTO aufbaustufe (
+                schueler_id, rollen_schalten, abbremsen_schalten,
+                bremsen_degressiv, bremsen_ziel, bremsen_gefahr,
+                gefaelle_anfahren, gefaelle_anhalten, gefaelle_rueckwaerts, gefaelle_sichern, gefaelle_schalten,
+                steig_anfahren, steig_anhalten, steig_rueckwaerts, steig_sichern, steig_schalten,
+                tastgeschwindigkeit, bedienung_kontrolle, oertliche_besonderheiten
+            ) VALUES (
+                %s, %(rollen_schalten)s, %(abbremsen_schalten)s,
+                %(bremsen_degressiv)s, %(bremsen_ziel)s, %(bremsen_gefahr)s,
+                %(gefaelle_anfahren)s, %(gefaelle_anhalten)s, %(gefaelle_rueckwaerts)s, %(gefaelle_sichern)s, %(gefaelle_schalten)s,
+                %(steig_anfahren)s, %(steig_anhalten)s, %(steig_rueckwaerts)s, %(steig_sichern)s, %(steig_schalten)s,
+                %(tastgeschwindigkeit)s, %(bedienung_kontrolle)s, %(oertliche_besonderheiten)s
+            )
+        """, (schueler_id, daten))
+
+        conn.commit()
+        cur.close()
+        conn.close()
+        return redirect(url_for('profil', schueler_id=schueler_id))
+
+    # Bei GET anzeigen:
+    cur.execute("SELECT * FROM schueler WHERE id = %s", (schueler_id,))
+    schueler = cur.fetchone()
+    conn.close()
+
+    return render_template('aufbaustufe.html', schueler=schueler)
 
 
 
