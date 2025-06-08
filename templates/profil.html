@@ -2,106 +2,78 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Profil – Ausbildungsdiagrammkarte</title>
-    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <title>Profil von {{ schueler.vorname }} {{ schueler.name }}</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100">
-<div class="flex">
-    <!-- Sidebar -->
-    <aside class="w-64 h-screen bg-white shadow-md p-4 hidden md:block">
-        <h2 class="text-xl font-bold mb-4">Navigation</h2>
-        <nav>
-            <a href="/grundstufe/{{ schueler.id }}" class="block py-2">Grundstufe</a>
-            <a href="/aufbaustufe/{{ schueler.id }}" class="block py-2">Aufbaustufe</a>
-            <a href="/leistungsstufe/{{ schueler.id }}" class="block py-2">Leistungsstufe</a>
-            <a href="/sonderfahrten/{{ schueler.id }}" class="block py-2">Sonderfahrten</a>
-            <a href="/grundfahraufgaben/{{ schueler.id }}" class="block py-2">Grundfahraufgaben</a>
-            <a href="/reifestufe/{{ schueler.id }}" class="block py-2">Reifestufe</a>
-            <a href="/technik/{{ schueler.id }}" class="block py-2">Technik</a>
-        </nav>
-    </aside>
+<body class="bg-gray-100 text-gray-900">
 
-    <!-- Hauptinhalt -->
-    <main class="flex-1 p-6">
-        <h1 class="text-3xl font-bold mb-4">Profil von {{ schueler.vorname }} {{ schueler.name }}</h1>
+    <div class="max-w-4xl mx-auto py-8">
+        <h1 class="text-3xl font-bold mb-6">Profil von {{ schueler.vorname }} {{ schueler.name }}</h1>
 
-        <!-- Stammdaten -->
-        <section class="bg-white p-4 rounded shadow mb-6">
-            <h2 class="text-xl font-semibold mb-2">Stammdaten</h2>
-            <p><strong>Geburtsdatum:</strong> {{ schueler.geburtsdatum }}</p>
-            <p><strong>Adresse:</strong> {{ schueler.adresse }}</p>
-            <p><strong>Telefon:</strong> {{ schueler.telefon }}</p>
-            <p><strong>Sehhilfe:</strong> {{ "Ja" if schueler.sehhilfe else "Nein" }}</p>
-        </section>
-
-        <!-- Fortschrittsbox -->
-        <section class="bg-white p-4 rounded shadow mb-6">
-            <h2 class="text-xl font-semibold mb-2">📊 Ausbildungs-Fortschritt</h2>
-
-            <!-- Schaltkompetenz -->
-            {% set schalt_farbe = "bg-red-500" %}
-            {% if schalt_prozent >= 80 %}
-                {% set schalt_farbe = "bg-green-500" %}
-            {% elif schalt_prozent >= 50 %}
-                {% set schalt_farbe = "bg-yellow-400" %}
-            {% endif %}
-
-            <div class="mb-4">
-                <label class="block font-medium mb-1">Schaltkompetenz (B197): {{ schalt_anzahl }}/10</label>
-                <div class="w-full bg-gray-200 rounded-full h-4">
-                    <div class="{{ schalt_farbe }} h-4 rounded-full transition-all duration-300" style="width: {{ schalt_prozent }}%;"></div>
-                </div>
+        <!-- Schaltkompetenz -->
+        <div class="mb-6">
+            <label class="block font-medium mb-1">Schaltkompetenz: {{ schalt_anzahl }}/10</label>
+            <div class="w-full bg-gray-200 rounded-full h-4">
+                <div class="bg-blue-500 h-4 rounded-full transition-all duration-300" style="width: {{ schalt_prozent }}%;"></div>
             </div>
+        </div>
 
-            <!-- Grundstufe -->
-            {% set grund_farbe = "bg-red-500" %}
-            {% if grundstufe_prozent >= 80 %}
-                {% set grund_farbe = "bg-green-500" %}
-            {% elif grundstufe_prozent >= 50 %}
-                {% set grund_farbe = "bg-yellow-400" %}
-            {% endif %}
+        <!-- Aufbaustufe -->
+        {% set aufbau_farbe = "bg-red-500" %}
+        {% if aufbaustufe_prozent >= 80 %}
+            {% set aufbau_farbe = "bg-green-500" %}
+        {% elif aufbaustufe_prozent >= 50 %}
+            {% set aufbau_farbe = "bg-yellow-400" %}
+        {% endif %}
 
-            <div class="mb-4">
-                <label class="block font-medium mb-1">Grundstufe: {{ grundstufe_abgeschlossen }}/25</label>
-                <div class="w-full bg-gray-200 rounded-full h-4">
-                    <div class="{{ grund_farbe }} h-4 rounded-full transition-all duration-300" style="width: {{ grundstufe_prozent }}%;"></div>
-                </div>
+        <div class="mb-6">
+            <label class="block font-medium mb-1">Aufbaustufe: {{ aufbaustufe_abgeschlossen }}/19</label>
+            <div class="w-full bg-gray-200 rounded-full h-4">
+                <div class="{{ aufbau_farbe }} h-4 rounded-full transition-all duration-300" style="width: {{ aufbaustufe_prozent }}%;"></div>
             </div>
+        </div>
 
-            <!-- Sonderfahrten -->
-            <div class="space-y-1">
-                <p>🚗 <strong>Überlandfahrten:</strong> {{ ueberland }}/5</p>
-                <p>🛣️ <strong>Autobahnfahrten:</strong> {{ autobahn }}/4</p>
-                <p>🌙 <strong>Dämmerungsfahrten:</strong> {{ daemmerung }}/3</p>
-            </div>
-        </section>
+        <!-- Sonderfahrten -->
+        <div class="mb-6">
+            <p class="mb-1 font-semibold">Sonderfahrten:</p>
+            <ul class="list-disc ml-6">
+                <li>Überland: {{ ueberland }}/5</li>
+                <li>Autobahn: {{ autobahn }}/4</li>
+                <li>Dämmerung: {{ daemmerung }}/3</li>
+            </ul>
+        </div>
 
-        <!-- Fahrstundenprotokoll -->
-        <section class="bg-white p-4 rounded shadow mb-6">
-            <h2 class="text-xl font-semibold mb-4">Fahrstundenprotokoll</h2>
+        <!-- Protokolleinträge -->
+        <div class="mb-6">
+            <p class="font-semibold mb-2">Fahrstundenprotokolle:</p>
+            <a href="{{ url_for('protokoll_neu', schueler_id=schueler.id) }}" class="inline-block mb-3 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">+ Neuer Eintrag</a>
             {% if protokolle %}
-                {% for eintrag in protokolle %}
-                    <div class="border-b py-2 flex justify-between items-center">
-                        <div>
-                            <strong>{{ eintrag.datum }}:</strong> {{ eintrag.inhalt }} ({{ eintrag.dauer_minuten }} min)
-                        </div>
-                        <div class="flex space-x-2">
-                            <a href="/protokoll_bearbeiten/{{ eintrag.id }}" class="text-sm text-blue-600 underline">Bearbeiten</a>
-                            <form action="/protokoll_loeschen/{{ eintrag.id }}" method="post" onsubmit="return confirm('Eintrag wirklich löschen?')">
-                                <button type="submit" class="text-sm text-red-600">🗑️ Löschen</button>
-                            </form>
-                        </div>
-                    </div>
-                {% endfor %}
+                <ul class="space-y-2">
+                    {% for eintrag in protokolle %}
+                        <li class="bg-white p-4 shadow rounded">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <strong>{{ eintrag.datum }}</strong> – {{ eintrag.inhalt }}
+                                    {% if eintrag.schaltkompetenz %}<span class="ml-2 text-sm text-blue-600">(Schaltkompetenz)</span>{% endif %}
+                                    {% if eintrag.sonderfahrt_typ %}<span class="ml-2 text-sm text-purple-600">({{ eintrag.sonderfahrt_typ }})</span>{% endif %}
+                                </div>
+                                <div>
+                                    <a href="{{ url_for('protokoll_bearbeiten', protokoll_id=eintrag.id) }}" class="text-blue-500 hover:underline mr-4">Bearbeiten</a>
+                                    <form action="{{ url_for('protokoll_loeschen', protokoll_id=eintrag.id) }}" method="POST" class="inline">
+                                        <button type="submit" class="text-red-600 hover:underline">Löschen</button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% if eintrag.notiz %}
+                                <p class="mt-2 text-sm text-gray-600">📝 {{ eintrag.notiz }}</p>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
             {% else %}
-                <p>Keine Einträge vorhanden.</p>
+                <p class="text-gray-600">Noch keine Fahrstundenprotokolle vorhanden.</p>
             {% endif %}
-        </section>
-
-        <!-- Button hinzufügen -->
-        <a href="/protokoll_neu/{{ schueler.id }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">➕ Protokoll hinzufügen</a>
-    </main>
-</div>
+        </div>
+    </div>
 </body>
 </html>
