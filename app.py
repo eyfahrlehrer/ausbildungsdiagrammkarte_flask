@@ -50,3 +50,45 @@ def healthz():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+from flask import Flask, render_template, request, redirect, url_for
+from datetime import datetime
+from models import Fahrstundenprotokoll, Base  # nicht vergessen zu importieren
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+# DB-Verbindung (Beispiel – anpassen mit deiner echten DB-URL)
+DATABASE_URL = os.environ.get("DATABASE_URL")
+engine = create_engine(DATABASE_URL)
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
+
+@app.route("/protokoll_erstellen/<int:schueler_id>", methods=["GET", "POST"])
+def protokoll_erstellen(schueler_id):
+    if request.method == "POST":
+        datum = request.form["datum"]
+        inhalt = request.form["inhalt"]
+        dauer = int(request.form["dauer_minuten"])
+        schaltkompetenz = "schaltkompetenz" in request.form
+        sonderfahrt_typ = request.form.get("sonderfahrt_typ")
+        notiz = request.form.get("notiz")
+        erstellt_am = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        eintrag = Fahrstundenprotokoll(
+            schueler_id=schueler_id,
+            datum=datum,
+            inhalt=inhalt,
+            dauer_minuten=dauer,
+            schaltkompetenz=schaltkompetenz,
+            sonderfahrt_typ=sonderfahrt_typ,
+            notiz=notiz,
+            erstellt_am=erstellt_am
+        )
+
+        session.add(eintrag)
+        session.commit()
+
+        return redirect(url_for("profil", schueler_id=schueler_id))  # Profilseite
+
+    return render_template("protokoll_erstellen.html", schueler_id=schueler_id)
