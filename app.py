@@ -126,6 +126,15 @@ def protokoll_bearbeiten(protokoll_id):
 
     return render_template("protokoll_bearbeiten.html", eintrag=eintrag, schueler=schueler)
 
+@app.route("/protokoll_loeschen/<int:protokoll_id>", methods=["POST"])
+def protokoll_loeschen(protokoll_id):
+    eintrag = Fahrstundenprotokoll.query.get_or_404(protokoll_id)
+    schueler_id = eintrag.schueler_id
+    db.session.delete(eintrag)
+    db.session.commit()
+    return redirect(url_for("profil", schueler_id=schueler_id))
+
+
 # ---------------------- Hauptausführung ----------------------
 
 if __name__ == "__main__":
