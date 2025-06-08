@@ -78,6 +78,30 @@ def profil(schueler_id):
     protokolle = Fahrstundenprotokoll.query.filter_by(schueler_id=schueler_id).all()
     return render_template("profil.html", schueler=schueler, protokolle=protokolle)
 
+@app.route("/protokoll_neu/<int:schueler_id>", methods=["GET", "POST"])
+def protokoll_neu(schueler_id):
+    conn = get_db_connection()
+    
+    if request.method == "POST":
+        datum = request.form["datum"]
+        inhalt = request.form["inhalt"]
+        dauer = request.form["dauer_minuten"]
+        schalt = request.form.get("schaltkompetenz") == "on"
+        sonder = request.form.get("sonderfahrt_typ")
+        notiz = request.form.get("notiz")
+
+        conn.execute(
+            "INSERT INTO fahrstundenprotokoll (schueler_id, datum, inhalt, dauer_minuten, schaltkompetenz, sonderfahrt_typ, notiz) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (schueler_id, datum, inhalt, dauer, schalt, sonder, notiz)
+        )
+        conn.commit()
+        conn.close()
+        return redirect(f"/profil/{schueler_id}")
+    
+    schueler = conn.execute("SELECT * FROM schueler WHERE id = ?", (schueler_id,)).fetchone()
+    conn.close()
+    return render_template("protokoll_erstellen.html", schueler_id=schueler_id, schueler=schueler)
+
 # ---------------------- Hauptausführung ----------------------
 
 if __name__ == "__main__":
