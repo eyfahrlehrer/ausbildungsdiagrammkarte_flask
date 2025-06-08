@@ -40,17 +40,26 @@
         <section class="bg-white p-4 rounded shadow mb-6">
             <h2 class="text-xl font-semibold mb-2">📊 Ausbildungs-Fortschritt</h2>
 
+            <!-- Schaltkompetenz -->
+            {% set schalt_farbe = "bg-red-500" %}
+            {% if schalt_prozent >= 80 %}
+                {% set schalt_farbe = "bg-green-500" %}
+            {% elif schalt_prozent >= 50 %}
+                {% set schalt_farbe = "bg-yellow-400" %}
+            {% endif %}
+
             <div class="mb-4">
                 <label class="block font-medium mb-1">Schaltkompetenz (B197): {{ schalt_anzahl }}/10</label>
                 <div class="w-full bg-gray-200 rounded-full h-4">
-                    <div class="bg-green-500 h-4 rounded-full" style="width: {{ schalt_prozent }}%;"></div>
+                    <div class="{{ schalt_farbe }} h-4 rounded-full transition-all duration-300" style="width: {{ schalt_prozent }}%;"></div>
                 </div>
             </div>
 
-            <div>
-                <p>🚗 Überlandfahrten: {{ ueberland }}/5</p>
-                <p>🛣️ Autobahnfahrten: {{ autobahn }}/4</p>
-                <p>🌙 Dämmerungsfahrten: {{ daemmerung }}/3</p>
+            <!-- Sonderfahrten -->
+            <div class="space-y-1">
+                <p>🚗 <strong>Überlandfahrten:</strong> {{ ueberland }}/5</p>
+                <p>🛣️ <strong>Autobahnfahrten:</strong> {{ autobahn }}/4</p>
+                <p>🌙 <strong>Dämmerungsfahrten:</strong> {{ daemmerung }}/3</p>
             </div>
         </section>
 
