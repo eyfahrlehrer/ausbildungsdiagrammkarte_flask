@@ -100,3 +100,13 @@ def protokoll_erstellen(schueler_id):
 # App starten (lokal)
 if __name__ == "__main__":
     app.run(debug=True)
+
+@app.route("/profil/<int:schueler_id>")
+def profil(schueler_id):
+    eintraege = session_db.query(Fahrstundenprotokoll)\
+        .filter_by(schueler_id=schueler_id)\
+        .order_by(Fahrstundenprotokoll.datum.desc())\
+        .all()
+
+    return render_template("profil.html", schueler_id=schueler_id, eintraege=eintraege)
+
