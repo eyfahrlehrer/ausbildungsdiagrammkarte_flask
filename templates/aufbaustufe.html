@@ -1,0 +1,64 @@
+<!-- templates/aufbaustufe.html -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Aufbaustufe – Ausbildungsdiagrammkarte</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-6">
+    <h1 class="text-3xl font-bold mb-6">Aufbaustufe – {{ schueler.vorname }} {{ schueler.name }}</h1>
+
+    <form action="/aufbaustufe/{{ schueler.id }}" method="post">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <fieldset class="bg-white p-4 rounded shadow">
+                <legend class="text-xl font-semibold mb-2">Fahrtechniken</legend>
+                <label class="block"><input type="checkbox" name="rollen_schalten"> Rollen und Schalten</label>
+                <label class="block"><input type="checkbox" name="abbremsen_schalten"> Abbremsen und Schalten</label>
+                <label class="block"><input type="checkbox" name="tastgeschwindigkeit"> Tastgeschwindigkeit</label>
+            </fieldset>
+
+            <fieldset class="bg-white p-4 rounded shadow">
+                <legend class="text-xl font-semibold mb-2">Bremsübungen</legend>
+                <label class="block"><input type="checkbox" name="brems_degressiv"> Degressives Bremsen</label>
+                <label class="block"><input type="checkbox" name="brems_ziel"> Zielbremsung</label>
+                <label class="block"><input type="checkbox" name="brems_gefahr"> Gefahrbremsung</label>
+            </fieldset>
+
+            <fieldset class="bg-white p-4 rounded shadow">
+                <legend class="text-xl font-semibold mb-2">Gefälle</legend>
+                <label class="block"><input type="checkbox" name="gefaelle_anfahren"> Anfahren</label>
+                <label class="block"><input type="checkbox" name="gefaelle_anhaltend"> Anhalten</label>
+                <label class="block"><input type="checkbox" name="gefaelle_rueckwaerts"> Rückwärts</label>
+                <label class="block"><input type="checkbox" name="gefaelle_sichern"> Sichern</label>
+                <label class="block"><input type="checkbox" name="gefaelle_schalten"> Schalten</label>
+            </fieldset>
+
+            <fieldset class="bg-white p-4 rounded shadow">
+                <legend class="text-xl font-semibold mb-2">Steigung</legend>
+                <label class="block"><input type="checkbox" name="steigung_anfahren"> Anfahren</label>
+                <label class="block"><input type="checkbox" name="steigung_anhaltend"> Anhalten</label>
+                <label class="block"><input type="checkbox" name="steigung_rueckwaerts"> Rückwärts</label>
+                <label class="block"><input type="checkbox" name="steigung_sichern"> Sichern</label>
+                <label class="block"><input type="checkbox" name="steigung_schalten"> Schalten</label>
+            </fieldset>
+
+            <fieldset class="bg-white p-4 rounded shadow">
+                <legend class="text-xl font-semibold mb-2">Bedienung & Kontrolle</legend>
+                <label class="block"><input type="checkbox" name="bedienung_kontrolle"> Bedienungs- und Kontrolleinrichtungen</label>
+            </fieldset>
+
+            <fieldset class="bg-white p-4 rounded shadow">
+                <legend class="text-xl font-semibold mb-2">Besondere Situationen</legend>
+                <label class="block"><input type="checkbox" name="oertliche_besonderheiten"> Örtliche Besonderheiten</label>
+            </fieldset>
+        </div>
+
+        <div class="mt-6">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Speichern</button>
+            <a href="/profil/{{ schueler.id }}" class="ml-4 text-blue-600 underline">Zurück zum Profil</a>
+        </div>
+    </form>
+</body>
+</html>
