@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Profil – Fahrschüler {{ schueler_id }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div class="max-w-5xl mx-auto p-6 mt-10 bg-white shadow-md rounded-xl">
+        <h1 class="text-2xl font-bold mb-6">📘 Ausbildungsprofil – Schüler-ID {{ schueler_id }}</h1>
+
+        <a href="/protokoll_erstellen/{{ schueler_id }}"
+           class="mb-6 inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            ➕ Neue Fahrstunde eintragen
+        </a>
+
+        {% if eintraege %}
+            <table class="w-full border mt-4 text-sm">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="px-3 py-2">📅 Datum</th>
+                        <th class="px-3 py-2">📝 Inhalt</th>
+                        <th class="px-3 py-2">⏱️ Dauer</th>
+                        <th class="px-3 py-2">🚘 Schalt?</th>
+                        <th class="px-3 py-2">🛣️ Sonderfahrt</th>
+                        <th class="px-3 py-2">🗒️ Notiz</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for eintrag in eintraege %}
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="px-3 py-2">{{ eintrag.datum }}</td>
+                        <td class="px-3 py-2">{{ eintrag.inhalt }}</td>
+                        <td class="px-3 py-2">{{ eintrag.dauer_minuten }} Min</td>
+                        <td class="px-3 py-2">{{ '✅' if eintrag.schaltkompetenz else '' }}</td>
+                        <td class="px-3 py-2">{{ eintrag.sonderfahrt_typ or '-' }}</td>
+                        <td class="px-3 py-2">{{ eintrag.notiz or '-' }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="mt-4 text-gray-500">Noch keine Fahrstunden dokumentiert.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
