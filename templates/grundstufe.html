@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Grundstufe – Ausbildungsdiagrammkarte</title>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+<div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-64 h-screen bg-white shadow-md p-4 hidden md:block">
+        <h2 class="text-xl font-bold mb-4">Navigation</h2>
+        <nav>
+            <a href="/grundstufe/{{ schueler.id }}" class="block py-2">Grundstufe</a>
+            <a href="/aufbaustufe/{{ schueler.id }}" class="block py-2">Aufbaustufe</a>
+            <a href="/leistungsstufe/{{ schueler.id }}" class="block py-2">Leistungsstufe</a>
+            <a href="/sonderfahrten/{{ schueler.id }}" class="block py-2">Sonderfahrten</a>
+            <a href="/grundfahraufgaben/{{ schueler.id }}" class="block py-2">Grundfahraufgaben</a>
+            <a href="/reifestufe/{{ schueler.id }}" class="block py-2">Reifestufe</a>
+            <a href="/technik/{{ schueler.id }}" class="block py-2">Technik</a>
+        </nav>
+    </aside>
+
+    <!-- Hauptinhalt -->
+    <main class="flex-1 p-6">
+        <h1 class="text-3xl font-bold mb-6">Grundstufe – {{ schueler.vorname }} {{ schueler.name }}</h1>
+
+        <form action="/grundstufe/{{ schueler.id }}" method="post" class="space-y-4">
+
+            <fieldset class="bg-white p-4 rounded shadow">
+                <legend class="text-xl font-semibold mb-2">Einsteigen & Sitzposition</legend>
+                <label class="block"><input type="checkbox" name="einsteigen"> Besonderheiten beim Einsteigen</label>
+                <label class="block"><input type="checkbox" name="sitz_einstellen"> Sitz einstellen</label>
+                <label class="block"><input type="checkbox" name="spiegel_einstellen"> Spiegel einstellen</label>
+                <label class="block"><input type="checkbox" name="lenkrad_einstellen"> Lenkrad einstellen</label>
+                <label class="block"><input type="checkbox" name="kopfstuetze_einstellen"> Kopfstütze einstellen</label>
+            </fieldset>
+
+            <fieldset class="bg-white p-4 rounded shadow">
+                <legend class="text-xl font-semibold mb-2">Fahrvorbereitung</legend>
+                <label class="block"><input type="checkbox" name="lenkradhaltung"> Lenkradhaltung</label>
+                <label class="block"><input type="checkbox" name="pedale"> Pedale</label>
+                <label class="block"><input type="checkbox" name="gurt_anlegen"> Gurt anlegen</label>
+                <label class="block"><input type="checkbox" name="schalthebel"> Schalthebel wählen</label>
+                <label class="block"><input type="checkbox" name="zuendschloss"> Zündschloss</label>
+                <label class="block"><input type="checkbox" name="motor_starten"> Motor starten</label>
+            </fieldset>
+
+            <fieldset class="bg-white p-4 rounded shadow">
+                <legend class="text-xl font-semibold mb-2">Fahrübungen</legend>
+                <label class="block"><input type="checkbox" name="anfahren_anhalt"> Anfahr- und Anhalteübungen</label>
+            </fieldset>
+
+            <fieldset class="bg-white p-4 rounded shadow">
+                <legend class="text-xl font-semibold mb-2">Schaltübungen – Hochschalten</legend>
+                <label class="block"><input type="checkbox" name="hoch_1_2"> 1. in 2. Gang</label>
+                <label class="block"><input type="checkbox" name="hoch_2_3"> 2. in 3. Gang</label>
+                <label class="block"><input type="checkbox" name="hoch_3_4"> 3. in 4. Gang</label>
+                <label class="block"><input type="checkbox" name="hoch_4_5"> 4. in 5. Gang</label>
+                <label class="block"><input type="checkbox" name="hoch_5_6"> 5. in 6. Gang</label>
+            </fieldset>
+
+            <fieldset class="bg-white p-4 rounded shadow">
+                <legend class="text-xl font-semibold mb-2">Schaltübungen – Runterschalten</legend>
+                <label class="block"><input type="checkbox" name="runter_4_3"> 4. in 3. Gang</label>
+                <label class="block"><input type="checkbox" name="runter_3_2"> 3. in 2. Gang</label>
+                <label class="block"><input type="checkbox" name="runter_2_1"> 2. in 1. Gang</label>
+            </fieldset>
+
+            <fieldset class="bg-white p-4 rounded shadow">
+                <legend class="text-xl font-semibold mb-2">Schaltübungen – Gänge überspringen</legend>
+                <label class="block"><input type="checkbox" name="ueber_4_2"> 4. in 2. Gang</label>
+                <label class="block"><input type="checkbox" name="ueber_4_1"> 4. in 1. Gang</label>
+                <label class="block"><input type="checkbox" name="ueber_3_1"> 3. in 1. Gang</label>
+            </fieldset>
+
+            <fieldset class="bg-white p-4 rounded shadow">
+                <legend class="text-xl font-semibold mb-2">Lenkübungen</legend>
+                <!-- Weitere Felder für Lenkübungen können hier ergänzt werden -->
+            </fieldset>
+
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Speichern</button>
+        </form>
+    </main>
+</div>
+</body>
+</html>
