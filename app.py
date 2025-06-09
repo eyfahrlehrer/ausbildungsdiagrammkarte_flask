@@ -17,7 +17,9 @@ if not raw_db_url:
 if raw_db_url.startswith("postgres://"):
     raw_db_url = raw_db_url.replace("postgres://", "postgresql://", 1)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = raw_db_url + "?sslmode=require"
+if "?sslmode=" not in raw_db_url:
+    raw_db_url += "?sslmode=require"
+app.config["SQLALCHEMY_DATABASE_URI"] = raw_db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
