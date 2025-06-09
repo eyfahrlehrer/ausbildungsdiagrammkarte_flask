@@ -64,6 +64,19 @@ def get_anzahl_aufbaustufe_checked(schueler_id):
         return anzahl, prozent
     return 0, 0
 
+def get_anzahl_grundfahraufgaben_checked(schueler_id):
+    result = db.session.execute("""
+        SELECT * FROM grundfahraufgaben WHERE schueler_id = :sid
+    """, {"sid": schueler_id}).fetchone()
+
+    if result:
+        werte = dict(result)
+        anzahl = sum(1 for key, value in werte.items() if key not in ('id', 'schueler_id') and value)
+        gesamt = len(werte) - 2
+        prozent = int((anzahl / gesamt) * 100)
+        return anzahl, prozent
+    return 0, 0
+
 # ---------------------- Routen ----------------------
 
 @app.route("/")
@@ -100,6 +113,7 @@ def profil(schueler_id):
     daemmerung = Fahrstundenprotokoll.query.filter_by(schueler_id=schueler_id, sonderfahrt_typ="Dämmerung").count()
 
     aufbaustufe_abgeschlossen, aufbaustufe_prozent = get_anzahl_aufbaustufe_checked(schueler_id)
+    grundfahraufgaben_abgeschlossen, grundfahraufgaben_prozent = get_anzahl_grundfahraufgaben_checked(schueler_id)
 
     return render_template(
         "profil.html",
@@ -111,98 +125,7 @@ def profil(schueler_id):
         autobahn=autobahn,
         daemmerung=daemmerung,
         aufbaustufe_abgeschlossen=aufbaustufe_abgeschlossen,
-        aufbaustufe_prozent=aufbaustufe_prozent
+        aufbaustufe_prozent=aufbaustufe_prozent,
+        grundfahraufgaben_abgeschlossen=grundfahraufgaben_abgeschlossen,
+        grundfahraufgaben_prozent=grundfahraufgaben_prozent
     )
-
-@app.route("/leistungsstufe/<int:schueler_id>", methods=["GET", "POST"])
-def leistungsstufe(schueler_id):
-    schueler = Schueler.query.get_or_404(schueler_id)
-
-    result = db.session.execute("SELECT * FROM leistungsstufe WHERE schueler_id = :sid", {"sid": schueler_id}).fetchone()
-
-    if request.method == "POST":
-        daten = {feld: feld in request.form for feld in [
-            "fahrbahnbenutzung", "einordnen", "markierungen",
-            "fahrstreifen_links", "fahrstreifen_rechts", "vorbeifahren",
-            "abbiegen_rechts", "abbiegen_links", "abbiegen_mehrspurig",
-            "abbiegen_radweg", "abbiegen_sonder", "abbiegen_strassenbahn", "abbiegen_einbahn",
-            "vorfahrt", "rechts_vor_links", "verkehrszeichen", "lichtzeichenanlage", "polizeibeamter",
-            "geschwindigkeit", "fussgaenger", "kinder", "oepnv", "behinderte", "bus", "schulbus", "radfahrer", "einbahn_rad",
-            "verkehrsberuhigt", "schwierige_fuehrung", "engpass", "kreisverkehr", "bahnuebergang",
-            "kritische_situationen", "hauptverkehr", "partnerschaft", "schwung", "fussgaengerbereich"
-        ]}
-
-        if result:
-            # Update
-            update_stmt = """
-                UPDATE leistungsstufe SET
-                {}
-                WHERE schueler_id = :sid
-            """.format(", ".join([f"{k} = :{k}" for k in daten.keys()]))
-
-            daten["sid"] = schueler_id
-            db.session.execute(update_stmt, daten)
-        else:
-            # Insert
-            feldnamen = ", ".join(["schueler_id"] + list(daten.keys()))
-            werte_namen = ", ".join([":schueler_id"] + [f":{k}" for k in daten.keys()])
-            daten["schueler_id"] = schueler_id
-
-            db.session.execute(f"""
-                INSERT INTO leistungsstufe ({feldnamen})
-                VALUES ({werte_namen})
-            """, daten)
-
-        db.session.commit()
-        return redirect(url_for("profil", schueler_id=schueler_id))
-
-    return render_template("leistungsstufe.html", schueler=schueler, eintrag=result)
-
-
-@app.route("/grundfahraufgaben/<int:schueler_id>", methods=["GET", "POST"])
-def grundfahraufgaben(schueler_id):
-    schueler = Schueler.query.get_or_404(schueler_id)
-
-    result = db.session.execute("""
-        SELECT * FROM grundfahraufgaben WHERE schueler_id = :sid
-    """, {"sid": schueler_id}).fetchone()
-
-    if request.method == "POST":
-        daten = {
-            'rechts_rueckwaerts_ecke': 'rechts_rueckwaerts_ecke' in request.form,
-            'umkehren': 'umkehren' in request.form,
-            'gefahrbremsung': 'gefahrbremsung' in request.form,
-            'rechts_quer_rueck': 'rechts_quer_rueck' in request.form,
-            'rechts_laengs_rueck': 'rechts_laengs_rueck' in request.form,
-            'rechts_quer_vor': 'rechts_quer_vor' in request.form,
-            'rechts_laengs_vor': 'rechts_laengs_vor' in request.form,
-        }
-
-        if result:
-            db.session.execute("""
-                UPDATE grundfahraufgaben SET
-                    rechts_rueckwaerts_ecke = :rechts_rueckwaerts_ecke,
-                    umkehren = :umkehren,
-                    gefahrbremsung = :gefahrbremsung,
-                    rechts_quer_rueck = :rechts_quer_rueck,
-                    rechts_laengs_rueck = :rechts_laengs_rueck,
-                    rechts_quer_vor = :rechts_quer_vor,
-                    rechts_laengs_vor = :rechts_laengs_vor
-                WHERE schueler_id = :sid
-            """, {**daten, "sid": schueler_id})
-        else:
-            db.session.execute("""
-                INSERT INTO grundfahraufgaben (
-                    schueler_id, rechts_rueckwaerts_ecke, umkehren, gefahrbremsung,
-                    rechts_quer_rueck, rechts_laengs_rueck, rechts_quer_vor, rechts_laengs_vor
-                ) VALUES (
-                    :sid, :rechts_rueckwaerts_ecke, :umkehren, :gefahrbremsung,
-                    :rechts_quer_rueck, :rechts_laengs_rueck, :rechts_quer_vor, :rechts_laengs_vor
-                )
-            """, {**daten, "sid": schueler_id})
-
-        db.session.commit()
-        return redirect(url_for("profil", schueler_id=schueler_id))
-
-    return render_template("grundfahraufgaben.html", schueler=schueler, eintrag=result)
-
