@@ -49,8 +49,12 @@ class Schueler(db.Model):
     name = db.Column(db.String(50))
     geburtsdatum = db.Column(db.String(50))
     adresse = db.Column(db.String(100))
+    plz = db.Column(db.String(10))           # NEU
+    ort = db.Column(db.String(100))          # NEU
     telefon = db.Column(db.String(30))
     sehhilfe = db.Column(db.String(10))
+    klasse = db.Column(db.String(10))        # NEU
+
 
 class Fahrstundenprotokoll(db.Model):
     __tablename__ = "fahrstundenprotokoll"
