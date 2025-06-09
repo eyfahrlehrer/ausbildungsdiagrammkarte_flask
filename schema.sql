@@ -10,7 +10,7 @@ CREATE TABLE rollen (
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     nutzername VARCHAR(50) NOT NULL UNIQUE,
-    passwort_hash TEXT NOT NULL,
+    password_hash TEXT NOT NULL,
     rolle_id INTEGER NOT NULL REFERENCES rollen(id),
     erstellt_am TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
