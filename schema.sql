@@ -222,3 +222,23 @@ CREATE TABLE IF NOT EXISTS daemmerungfahrt (
     orientierung BOOLEAN DEFAULT FALSE,
     abschlussbesprechung BOOLEAN DEFAULT FALSE
 );
+
+CREATE TABLE technik (
+    id SERIAL PRIMARY KEY,
+    schueler_id INTEGER REFERENCES schueler(id) ON DELETE CASCADE,
+    reifen BOOLEAN DEFAULT FALSE,
+    beleuchtung BOOLEAN DEFAULT FALSE,
+    bremsanlage BOOLEAN DEFAULT FALSE,
+    lenkung BOOLEAN DEFAULT FALSE,
+    flüssigkeiten BOOLEAN DEFAULT FALSE,
+    kontrollleuchten BOOLEAN DEFAULT FALSE,
+    hupe BOOLEAN DEFAULT FALSE,
+    scheibenwischer BOOLEAN DEFAULT FALSE,
+    warnblinkanlage BOOLEAN DEFAULT FALSE,
+    motorraum BOOLEAN DEFAULT FALSE,
+    sicherungen BOOLEAN DEFAULT FALSE,
+    verbandskasten BOOLEAN DEFAULT FALSE,
+    warndreieck BOOLEAN DEFAULT FALSE,
+    warnweste BOOLEAN DEFAULT FALSE,
+    witterung BOOLEAN DEFAULT FALSE
+);
