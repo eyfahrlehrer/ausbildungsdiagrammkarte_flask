@@ -255,3 +255,4 @@ CREATE TABLE schueler (
     sehhilfe VARCHAR(10),
     klasse VARCHAR(10)
 );
+
