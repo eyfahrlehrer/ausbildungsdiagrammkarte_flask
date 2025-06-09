@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Technikprüfung – {{ schueler.vorname }} {{ schueler.name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <div class="max-w-4xl mx-auto py-8 px-4">
+        <h1 class="text-2xl font-bold mb-6">Technik – {{ schueler.vorname }} {{ schueler.name }}</h1>
+
+        <form method="POST">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <div class="space-y-2">
+                    <label class="block font-semibold mb-1">Allgemeine Technik</label>
+                    <label class="flex items-center"><input type="checkbox" name="reifen" {% if eintrag and eintrag.reifen %}checked{% endif %}> <span class="ml-2">Reifen</span></label>
+                    <label class="flex items-center"><input type="checkbox" name="beleuchtung" {% if eintrag and eintrag.beleuchtung %}checked{% endif %}> <span class="ml-2">Beleuchtung</span></label>
+                    <label class="flex items-center"><input type="checkbox" name="bremsanlage" {% if eintrag and eintrag.bremsanlage %}checked{% endif %}> <span class="ml-2">Bremsanlage</span></label>
+                    <label class="flex items-center"><input type="checkbox" name="lenkung" {% if eintrag and eintrag.lenkung %}checked{% endif %}> <span class="ml-2">Lenkung</span></label>
+                    <label class="flex items-center"><input type="checkbox" name="flüssigkeiten" {% if eintrag and eintrag.flüssigkeiten %}checked{% endif %}> <span class="ml-2">Flüssigkeiten</span></label>
+                    <label class="flex items-center"><input type="checkbox" name="kontrollleuchten" {% if eintrag and eintrag.kontrollleuchten %}checked{% endif %}> <span class="ml-2">Kontrollleuchten</span></label>
+                    <label class="flex items-center"><input type="checkbox" name="hupe" {% if eintrag and eintrag.hupe %}checked{% endif %}> <span class="ml-2">Hupe</span></label>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block font-semibold mb-1">Sicherheitsausstattung & Witterung</label>
+                    <label class="flex items-center"><input type="checkbox" name="scheibenwischer" {% if eintrag and eintrag.scheibenwischer %}checked{% endif %}> <span class="ml-2">Scheibenwischer</span></label>
+                    <label class="flex items-center"><input type="checkbox" name="warnblinkanlage" {% if eintrag and eintrag.warnblinkanlage %}checked{% endif %}> <span class="ml-2">Warnblinkanlage</span></label>
+                    <label class="flex items-center"><input type="checkbox" name="motorraum" {% if eintrag and eintrag.motorraum %}checked{% endif %}> <span class="ml-2">Motorraum</span></label>
+                    <label class="flex items-center"><input type="checkbox" name="sicherungen" {% if eintrag and eintrag.sicherungen %}checked{% endif %}> <span class="ml-2">Sicherungen</span></label>
+                    <label class="flex items-center"><input type="checkbox" name="verbandskasten" {% if eintrag and eintrag.verbandskasten %}checked{% endif %}> <span class="ml-2">Verbandskasten</span></label>
+                    <label class="flex items-center"><input type="checkbox" name="warndreieck" {% if eintrag and eintrag.warndreieck %}checked{% endif %}> <span class="ml-2">Warndreieck</span></label>
+                    <label class="flex items-center"><input type="checkbox" name="warnweste" {% if eintrag and eintrag.warnweste %}checked{% endif %}> <span class="ml-2">Warnweste</span></label>
+                    <label class="flex items-center"><input type="checkbox" name="witterung" {% if eintrag and eintrag.witterung %}checked{% endif %}> <span class="ml-2">Witterungseinflüsse</span></label>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-between">
+                <a href="{{ url_for('profil', schueler_id=schueler.id) }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded">Zurück zum Profil</a>
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">Speichern</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
