@@ -108,10 +108,7 @@ def profil(schueler_id):
                            **{f"{bereich}_abgeschlossen": fortschritte[bereich][0] for bereich in bereiche},
                            **{f"{bereich}_prozent": fortschritte[bereich][1] for bereich in bereiche})
 
-@app.route("/generate-hash/<pwd>")
-def generate_hash(pwd):
-    from werkzeug.security import generate_password_hash
-    return generate_password_hash(pwd)
+
 
 # Weitere Routen wie /aufbaustufe/<id>, /grundfahraufgaben/<id>, /technik/<id> etc.
 # sind analog zur Route /reifestufe/<id> umzusetzen.
