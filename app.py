@@ -23,6 +23,8 @@ if "?sslmode=" not in raw_db_url:
 app.config["SQLALCHEMY_DATABASE_URI"] = raw_db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+# ---------------------- Datenbank Setup ----------------------
+
 db = SQLAlchemy(app)
 
 # ---------------------- Datenbankmodelle ----------------------
@@ -89,7 +91,6 @@ def login():
             passwort = request.form["passwort"]
 
             print(f"[Login-DEBUG] Nutzername erhalten: {nutzername}")
-            
             print("[Login-DEBUG] Starte DB-Abfrage...")
             user = db.session.query(User).filter_by(nutzername=nutzername).first()
             print("[Login-DEBUG] DB-Abfrage abgeschlossen")
@@ -114,12 +115,11 @@ def login():
 
     return render_template("login.html")
 
-
 @app.route("/dashboard")
 def dashboard():
     if "user_id" not in session:
         return redirect(url_for("login"))
-    return "✅ Dashboard – Login erfolgreich! User-ID: {} / Rolle-ID: {}".format(session["user_id"], session["rolle_id"])
+    return render_template("dashboard.html", user_id=session["user_id"], rolle_id=session["rolle_id"])
 
 @app.route("/profil/<int:schueler_id>")
 def profil(schueler_id):
@@ -134,33 +134,4 @@ def profil(schueler_id):
     bereiche = ["aufbaustufe", "leistungsstufe", "grundfahraufgaben", "reifestufe", "technik"]
     fortschritte = {bereich: get_checked_count(schueler_id, bereich) for bereich in bereiche}
 
-    return render_template("profil.html", schueler=schueler, protokolle=protokolle,
-                           schalt_anzahl=schalt_anzahl, schalt_prozent=schalt_prozent,
-                           ueberland=sonderfahrten["Überland"], autobahn=sonderfahrten["Autobahn"],
-                           daemmerung=sonderfahrten["Dämmerung"],
-                           **{f"{bereich}_abgeschlossen": fortschritte[bereich][0] for bereich in bereiche},
-                           **{f"{bereich}_prozent": fortschritte[bereich][1] for bereich in bereiche})
-
-@app.route("/test-db")
-def test_db():
-    try:
-        result = db.session.execute(text("SELECT 1")).scalar()
-        return f"✅ Datenbankverbindung funktioniert: {result}"
-    except Exception as e:
-        return f"❌ Fehler bei DB-Zugriff: {e}", 500
-
-
-# Am Ende von app.py:
-if __name__ == "__main__":
-    from werkzeug.security import generate_password_hash
-    from models import db, User
-
-    with app.app_context():
-        pw = generate_password_hash("!4?}g<{MLM1jYKUtp%4!(Q4H\"}pi+$3")
-        admin = User(nutzername="admin", password_hash=pw, rolle_id=1)
-        db.session.add(admin)
-        db.session.commit()
-        print("✅ Admin wurde neu erstellt!")
-
-    app.run(debug=True)
-
+    return re
