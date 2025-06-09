@@ -105,6 +105,7 @@ def dashboard():
     return render_template("dashboard.html")
 
 @app.route("/stammdaten", methods=["GET", "POST"])
+@app.route("/create", methods=["GET", "POST"])
 def stammdaten():
     if request.method == "POST":
         neuer_schueler = Schueler(
