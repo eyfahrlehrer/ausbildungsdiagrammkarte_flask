@@ -102,3 +102,6 @@ def profil(schueler_id):
                            grundfahraufgaben_abgeschlossen=fortschritte["grundfahraufgaben"][0], grundfahraufgaben_prozent=fortschritte["grundfahraufgaben"][1],
                            reifestufe_abgeschlossen=fortschritte["reifestufe"][0], reifestufe_prozent=fortschritte["reifestufe"][1],
                            technik_abgeschlossen=fortschritte["technik"][0], technik_prozent=fortschritte["technik"][1])
+
+if __name__ == "__main__":
+    app.run()
