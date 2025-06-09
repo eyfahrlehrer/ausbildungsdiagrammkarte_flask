@@ -2,12 +2,84 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fahrlehrer Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>✅ Login erfolgreich!</h1>
-    <p>Willkommen im Dashboard.</p>
-    <p>Du bist eingeloggt als Benutzer-ID: {{ session["user_id"] }} / Rolle-ID: {{ session["rolle_id"] }}</p>
-    <a href="{{ url_for('logout') }}">Logout</a>
+<body class="bg-gray-100 text-gray-800">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white shadow-lg hidden md:block">
+            <div class="p-6 border-b">
+                <h1 class="text-2xl font-bold text-blue-600">Fahrschule Admin</h1>
+            </div>
+            <nav class="p-4 space-y-3">
+                <a href="/dashboard" class="block py-2 px-3 rounded hover:bg-blue-100">🏠 Dashboard</a>
+                <a href="/create" class="block py-2 px-3 rounded hover:bg-blue-100">👤 Fahrschüler erstellen</a>
+                <a href="/schueler" class="block py-2 px-3 rounded hover:bg-blue-100">📋 Alle Fahrschüler</a>
+                <a href="/logout" class="block py-2 px-3 rounded text-red-600 hover:bg-red-100">🚪 Logout</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <header class="mb-6">
+                <h2 class="text-xl font-semibold">Willkommen zurück, Fahrlehrer 👋</h2>
+                <p class="text-sm text-gray-500">Letzter Login: 09.06.2025 19:30 Uhr</p>
+            </header>
+
+            <!-- Statistik-Kacheln -->
+            <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white p-4 rounded shadow">👨‍🎓 <strong>14</strong><br>Aktive Schüler</div>
+                <div class="bg-white p-4 rounded shadow">✅ <strong>6</strong><br>Bestandene Prüfungen</div>
+                <div class="bg-white p-4 rounded shadow">🚗 <strong>9</strong><br>Offene Sonderfahrten</div>
+                <div class="bg-white p-4 rounded shadow">📅 <strong>3</strong><br>Heutige Termine</div>
+            </section>
+
+            <!-- Letzte Aktivitäten -->
+            <section class="mb-6">
+                <h3 class="text-lg font-bold mb-2">Letzte Aktivitäten</h3>
+                <div class="bg-white rounded shadow overflow-x-auto">
+                    <table class="table-auto w-full text-sm">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-2">Name</th>
+                                <th class="px-4 py-2">Letzte Aktion</th>
+                                <th class="px-4 py-2">Zeit</th>
+                                <th class="px-4 py-2"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b">
+                                <td class="px-4 py-2">Max Müller</td>
+                                <td class="px-4 py-2">Fahrstunde protokolliert</td>
+                                <td class="px-4 py-2">Heute, 15:30 Uhr</td>
+                                <td class="px-4 py-2"><a href="/profil/70" class="text-blue-600">Profil öffnen</a></td>
+                            </tr>
+                            <!-- Weitere Einträge hier -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Heutige Termine -->
+            <section class="mb-6">
+                <h3 class="text-lg font-bold mb-2">Heutige Fahrten</h3>
+                <ul class="bg-white rounded shadow divide-y">
+                    <li class="p-4">🚗 <strong>Lisa Schmidt</strong> - 09:00 Uhr - Überlandfahrt</li>
+                    <li class="p-4">🚗 <strong>Tim Becker</strong> - 11:00 Uhr - Stadtfahrt</li>
+                    <li class="p-4">🚗 <strong>Anna Meier</strong> - 13:00 Uhr - Schaltkompetenz</li>
+                </ul>
+            </section>
+
+            <!-- Benachrichtigungen -->
+            <section>
+                <h3 class="text-lg font-bold mb-2">🔔 Hinweise</h3>
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4">
+                    <p>2 Schüler haben noch keine Sonderfahrten begonnen!</p>
+                </div>
+            </section>
+        </main>
+    </div>
 </body>
 </html>
