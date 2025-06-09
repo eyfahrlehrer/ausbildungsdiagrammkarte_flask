@@ -4,9 +4,20 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
 
+# ---------------------- Flask App Setup ----------------------
+
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "fallback-secret-key")
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL").replace("postgres://", "postgresql://", 1)
+
+# Sichere und kompatible Datenbank-URL vorbereiten
+raw_db_url = os.getenv("DATABASE_URL")
+if not raw_db_url:
+    raise RuntimeError("❌ DATABASE_URL ist nicht gesetzt!")
+
+if raw_db_url.startswith("postgres://"):
+    raw_db_url = raw_db_url.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = raw_db_url + "?sslmode=require"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
