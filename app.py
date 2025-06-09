@@ -113,3 +113,47 @@ def profil(schueler_id):
         aufbaustufe_abgeschlossen=aufbaustufe_abgeschlossen,
         aufbaustufe_prozent=aufbaustufe_prozent
     )
+
+@app.route("/leistungsstufe/<int:schueler_id>", methods=["GET", "POST"])
+def leistungsstufe(schueler_id):
+    schueler = Schueler.query.get_or_404(schueler_id)
+
+    result = db.session.execute("SELECT * FROM leistungsstufe WHERE schueler_id = :sid", {"sid": schueler_id}).fetchone()
+
+    if request.method == "POST":
+        daten = {feld: feld in request.form for feld in [
+            "fahrbahnbenutzung", "einordnen", "markierungen",
+            "fahrstreifen_links", "fahrstreifen_rechts", "vorbeifahren",
+            "abbiegen_rechts", "abbiegen_links", "abbiegen_mehrspurig",
+            "abbiegen_radweg", "abbiegen_sonder", "abbiegen_strassenbahn", "abbiegen_einbahn",
+            "vorfahrt", "rechts_vor_links", "verkehrszeichen", "lichtzeichenanlage", "polizeibeamter",
+            "geschwindigkeit", "fussgaenger", "kinder", "oepnv", "behinderte", "bus", "schulbus", "radfahrer", "einbahn_rad",
+            "verkehrsberuhigt", "schwierige_fuehrung", "engpass", "kreisverkehr", "bahnuebergang",
+            "kritische_situationen", "hauptverkehr", "partnerschaft", "schwung", "fussgaengerbereich"
+        ]}
+
+        if result:
+            # Update
+            update_stmt = """
+                UPDATE leistungsstufe SET
+                {}
+                WHERE schueler_id = :sid
+            """.format(", ".join([f"{k} = :{k}" for k in daten.keys()]))
+
+            daten["sid"] = schueler_id
+            db.session.execute(update_stmt, daten)
+        else:
+            # Insert
+            feldnamen = ", ".join(["schueler_id"] + list(daten.keys()))
+            werte_namen = ", ".join([":schueler_id"] + [f":{k}" for k in daten.keys()])
+            daten["schueler_id"] = schueler_id
+
+            db.session.execute(f"""
+                INSERT INTO leistungsstufe ({feldnamen})
+                VALUES ({werte_namen})
+            """, daten)
+
+        db.session.commit()
+        return redirect(url_for("profil", schueler_id=schueler_id))
+
+    return render_template("leistungsstufe.html", schueler=schueler, eintrag=result)
