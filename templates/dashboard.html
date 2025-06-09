@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>✅ Login erfolgreich!</h1>
+    <p>Willkommen im Dashboard.</p>
+    <p>Du bist eingeloggt als Benutzer-ID: {{ session["user_id"] }} / Rolle-ID: {{ session["rolle_id"] }}</p>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</body>
+</html>
