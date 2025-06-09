@@ -97,11 +97,11 @@ def profil(schueler_id):
                            schalt_anzahl=schalt_anzahl, schalt_prozent=schalt_prozent,
                            ueberland=sonderfahrten["Überland"], autobahn=sonderfahrten["Autobahn"],
                            daemmerung=sonderfahrten["Dämmerung"],
-                           aufbaustufe_abgeschlossen=fortschritte["aufbaustufe"][0], aufbaustufe_prozent=fortschritte["aufbaustufe"][1],
-                           leistungsstufe_abgeschlossen=fortschritte["leistungsstufe"][0], leistungsstufe_prozent=fortschritte["leistungsstufe"][1],
-                           grundfahraufgaben_abgeschlossen=fortschritte["grundfahraufgaben"][0], grundfahraufgaben_prozent=fortschritte["grundfahraufgaben"][1],
-                           reifestufe_abgeschlossen=fortschritte["reifestufe"][0], reifestufe_prozent=fortschritte["reifestufe"][1],
-                           technik_abgeschlossen=fortschritte["technik"][0], technik_prozent=fortschritte["technik"][1])
+                           **{f"{bereich}_abgeschlossen": fortschritte[bereich][0] for bereich in bereiche},
+                           **{f"{bereich}_prozent": fortschritte[bereich][1] for bereich in bereiche})
+
+# Weitere Routen wie /aufbaustufe/<id>, /grundfahraufgaben/<id>, /technik/<id> etc.
+# sind analog zur Route /reifestufe/<id> umzusetzen.
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
