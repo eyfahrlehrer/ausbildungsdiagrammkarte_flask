@@ -33,6 +33,21 @@
             </div>
         </div>
 
+        <!-- Grundfahraufgaben -->
+        {% set grund_farbe = "bg-red-500" %}
+        {% if grundfahraufgaben_prozent >= 80 %}
+            {% set grund_farbe = "bg-green-500" %}
+        {% elif grundfahraufgaben_prozent >= 50 %}
+            {% set grund_farbe = "bg-yellow-400" %}
+        {% endif %}
+
+        <div class="mb-6">
+            <label class="block font-medium mb-1">Grundfahraufgaben: {{ grundfahraufgaben_abgeschlossen }}/{{ grundfahraufgaben_gesamt }}</label>
+            <div class="w-full bg-gray-200 rounded-full h-4">
+                <div class="{{ grund_farbe }} h-4 rounded-full transition-all duration-300" style="width: {{ grundfahraufgaben_prozent }}%;"></div>
+            </div>
+        </div>
+
         <!-- Leistungsstufe -->
         {% set leistung_farbe = "bg-red-500" %}
         {% if leistungsstufe_prozent >= 80 %}
