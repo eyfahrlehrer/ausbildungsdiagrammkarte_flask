@@ -101,3 +101,47 @@ def profil(schueler_id):
                            leistungsstufe_abgeschlossen=fortschritte["leistungsstufe"][0], leistungsstufe_prozent=fortschritte["leistungsstufe"][1],
                            grundfahraufgaben_abgeschlossen=fortschritte["grundfahraufgaben"][0], grundfahraufgaben_prozent=fortschritte["grundfahraufgaben"][1],
                            reifestufe_abgeschlossen=fortschritte["reifestufe"][0], reifestufe_prozent=fortschritte["reifestufe"][1])
+
+@app.route("/reifestufe/<int:schueler_id>", methods=["GET", "POST"])
+def reifestufe(schueler_id):
+    schueler = Schueler.query.get_or_404(schueler_id)
+
+    result = db.session.execute("""
+        SELECT * FROM reifestufe WHERE schueler_id = :sid
+    """, {"sid": schueler_id}).fetchone()
+
+    if request.method == "POST":
+        daten = {
+            "mehrspuriges_abbiegen": "mehrspuriges_abbiegen" in request.form,
+            "baustellen": "baustellen" in request.form,
+            "verkehrsberuhigte_bereiche": "verkehrsberuhigte_bereiche" in request.form,
+            "verkehrsfluss_anpassen": "verkehrsfluss_anpassen" in request.form,
+            "starkes_verzoegern": "starkes_verzoegern" in request.form,
+            "fremdverhalten_erkennen": "fremdverhalten_erkennen" in request.form,
+            "situationsbeurteilung": "situationsbeurteilung" in request.form,
+            "selbstkontrolle": "selbstkontrolle" in request.form,
+            "notsituationen": "notsituationen" in request.form,
+            "situationsgerechtes_handeln": "situationsgerechtes_handeln" in request.form,
+            "sozialverhalten": "sozialverhalten" in request.form,
+            "rücksichtnahme": "rücksichtnahme" in request.form,
+            "situationen_bewerten": "situationen_bewerten" in request.form,
+            "sicherheitsabstand": "sicherheitsabstand" in request.form,
+            "abschluss": "abschluss" in request.form
+        }
+
+        if result:
+            db.session.execute("""
+                UPDATE reifestufe SET
+                {} WHERE schueler_id = :sid
+            """.format(", ".join([f"{k} = :{k}" for k in daten.keys()])), {**daten, "sid": schueler_id})
+        else:
+            db.session.execute("""
+                INSERT INTO reifestufe (schueler_id, {}) VALUES (:schueler_id, {})
+            """.format(", ".join(daten.keys()), ", ".join([f":{k}" for k in daten.keys()])), {"schueler_id": schueler_id, **daten})
+
+        db.session.commit()
+        return redirect(url_for("profil", schueler_id=schueler_id))
+
+    return render_template("reifestufe.html", schueler=schueler, eintrag=result)
+
+
