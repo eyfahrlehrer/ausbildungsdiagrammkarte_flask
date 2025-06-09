@@ -1,21 +1,27 @@
-from models import User, Base
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from app import db, User
 from werkzeug.security import generate_password_hash
-import os
+from datetime import datetime
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
-engine = create_engine(DATABASE_URL)
-Base.metadata.bind = engine
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
+nutzername = "admin"
+passwort = "!4?}g<{MLM1jYKUtp%4!(Q4H\"}pi+$3"
+rolle_id = 1  # ID aus Tabelle "rollen" (z. B. 1 = Superadmin)
 
-admin = User(
-    username="admin",
-    password_hash=generate_password_hash("admin123"),
-    rolle="superadmin"
+# Bestehenden Nutzer mit gleichem Namen löschen (optional)
+bestehend = User.query.filter_by(nutzername=nutzername).first()
+if bestehend:
+    db.session.delete(bestehend)
+    db.session.commit()
+    print(f"🧹 Alter Nutzer '{nutzername}' wurde entfernt.")
+
+# Neuen User anlegen
+neuer_user = User(
+    nutzername=nutzername,
+    password_hash=generate_password_hash(passwort),
+    rolle_id=rolle_id,
+    erstellt_am=datetime.utcnow()
 )
 
-session.add(admin)
-session.commit()
-print("✅ Admin wurde erstellt.")
+db.session.add(neuer_user)
+db.session.commit()
+
+print(f"✅ Neuer Admin '{nutzername}' wurde erstellt.")
