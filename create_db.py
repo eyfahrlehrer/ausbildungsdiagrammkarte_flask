@@ -15,7 +15,7 @@ with app.app_context():
     if not User.query.filter_by(nutzername="admin").first():
         admin_user = User(
             nutzername="admin",
-            passwort_hash=generate_password_hash("1234567"),
+            password_hash=generate_password_hash("1234567"),
             rolle_id=admin_rolle.id
         )
         db.session.add(admin_user)
