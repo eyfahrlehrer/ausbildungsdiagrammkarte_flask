@@ -147,3 +147,29 @@ CREATE TABLE IF NOT EXISTS grundfahraufgaben (
     rechts_quer_vor BOOLEAN DEFAULT FALSE,
     rechts_laengs_vor BOOLEAN DEFAULT FALSE
 );
+
+CREATE TABLE IF NOT EXISTS ueberlandfahrt (
+    id SERIAL PRIMARY KEY,
+    schueler_id INTEGER REFERENCES schueler(id) ON DELETE CASCADE,
+    
+    abstand_vorne BOOLEAN DEFAULT FALSE,
+    abstand_hinten BOOLEAN DEFAULT FALSE,
+    abstand_seitlich BOOLEAN DEFAULT FALSE,
+
+    beobachtung_spiegel BOOLEAN DEFAULT FALSE,
+    verkehrszeichen BOOLEAN DEFAULT FALSE,
+    kurven BOOLEAN DEFAULT FALSE,
+    steigungen BOOLEAN DEFAULT FALSE,
+    gefaelle BOOLEAN DEFAULT FALSE,
+    alleen BOOLEAN DEFAULT FALSE,
+    ueberholen BOOLEAN DEFAULT FALSE,
+
+    liegenbleiben_absichern BOOLEAN DEFAULT FALSE,
+    fussgaenger BOOLEAN DEFAULT FALSE,
+    einfahrt_ortschaft BOOLEAN DEFAULT FALSE,
+    wildtiere BOOLEAN DEFAULT FALSE,
+
+    leistungsgrenze BOOLEAN DEFAULT FALSE,
+    ablenkung BOOLEAN DEFAULT FALSE,
+    orientierung BOOLEAN DEFAULT FALSE
+);
