@@ -140,5 +140,14 @@ def profil(schueler_id):
                            **{f"{bereich}_abgeschlossen": fortschritte[bereich][0] for bereich in bereiche},
                            **{f"{bereich}_prozent": fortschritte[bereich][1] for bereich in bereiche})
 
+@app.route("/test-db")
+def test_db():
+    try:
+        result = db.session.execute("SELECT 1").scalar()
+        return f"✅ Datenbankverbindung funktioniert: {result}"
+    except Exception as e:
+        return f"❌ Fehler bei DB-Zugriff: {e}", 500
+
+
 if __name__ == "__main__":
     app.run(debug=True)
