@@ -145,3 +145,44 @@ def reifestufe(schueler_id):
     return render_template("reifestufe.html", schueler=schueler, eintrag=result)
 
 
+@app.route("/technik/<int:schueler_id>", methods=["GET", "POST"])
+def technik(schueler_id):
+    schueler = Schueler.query.get_or_404(schueler_id)
+
+    result = db.session.execute("""
+        SELECT * FROM technik WHERE schueler_id = :sid
+    """, {"sid": schueler_id}).fetchone()
+
+    if request.method == "POST":
+        daten = {
+            "reifen": "reifen" in request.form,
+            "beleuchtung": "beleuchtung" in request.form,
+            "bremsanlage": "bremsanlage" in request.form,
+            "lenkung": "lenkung" in request.form,
+            "flüssigkeiten": "flüssigkeiten" in request.form,
+            "kontrollleuchten": "kontrollleuchten" in request.form,
+            "hupe": "hupe" in request.form,
+            "scheibenwischer": "scheibenwischer" in request.form,
+            "warnblinkanlage": "warnblinkanlage" in request.form,
+            "motorraum": "motorraum" in request.form,
+            "sicherungen": "sicherungen" in request.form,
+            "verbandskasten": "verbandskasten" in request.form,
+            "warndreieck": "warndreieck" in request.form,
+            "warnweste": "warnweste" in request.form,
+            "witterung": "witterung" in request.form
+        }
+
+        if result:
+            db.session.execute("""
+                UPDATE technik SET
+                {} WHERE schueler_id = :sid
+            """.format(", ".join([f"{k} = :{k}" for k in daten.keys()])), {**daten, "sid": schueler_id})
+        else:
+            db.session.execute("""
+                INSERT INTO technik (schueler_id, {}) VALUES (:schueler_id, {})
+            """.format(", ".join(daten.keys()), ", ".join([f":{k}" for k in daten.keys()])), {"schueler_id": schueler_id, **daten})
+
+        db.session.commit()
+        return redirect(url_for("profil", schueler_id=schueler_id))
+
+    return render_template("technik.html", schueler=schueler, eintrag=result)
