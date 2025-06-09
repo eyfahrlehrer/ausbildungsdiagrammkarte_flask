@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Dämmerungsfahrt</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-900">
+<div class="max-w-5xl mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-6">🌙 Dämmerungs- / Dunkelheitsfahrt</h1>
+
+    <form method="POST" action="">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Linke Spalte -->
+            <fieldset class="bg-white p-4 rounded shadow">
+                <legend class="font-semibold text-lg mb-4">🔧 Beleuchtung & Technik</legend>
+                <div class="space-y-2">
+                    <label><input type="checkbox" name="beleuchtung"> Beleuchtung</label><br>
+                    <label><input type="checkbox" name="kontrolle"> Kontrolle</label><br>
+                    <label><input type="checkbox" name="benutzung"> Benutzung</label><br>
+                    <label><input type="checkbox" name="einstellen"> Einstellen</label><br>
+                    <label><input type="checkbox" name="fernlicht"> Fernlicht</label><br>
+                </div>
+                <div class="mt-4 space-y-2">
+                    <label><input type="checkbox" name="beleuchtete_strassen"> Beleuchtete Straßen</label><br>
+                    <label><input type="checkbox" name="unbeleuchtete_strassen"> Unbeleuchtete Straßen</label><br>
+                    <label><input type="checkbox" name="parken"> Parken</label>
+                </div>
+            </fieldset>
+
+            <!-- Rechte Spalte -->
+            <fieldset class="bg-white p-4 rounded shadow">
+                <legend class="font-semibold text-lg mb-4">🌫️ Besondere Situationen</legend>
+                <div class="space-y-2">
+                    <label><input type="checkbox" name="schlechte_witterung"> Schlechte Witterung</label><br>
+                    <label><input type="checkbox" name="bahnuebergaenge"> Bahnübergänge</label><br>
+                    <label><input type="checkbox" name="tiere"> Tiere</label><br>
+                    <label><input type="checkbox" name="unbeleuchtete_verkehrsteilnehmer"> Unbeleuchtete Verkehrsteilnehmer</label><br>
+                </div>
+
+                <div class="mt-4 space-y-2">
+                    <legend class="font-semibold text-md">🚨 Besondere Anforderungen</legend>
+                    <label><input type="checkbox" name="blendung"> Blendung</label><br>
+                    <label><input type="checkbox" name="orientierung"> Orientierung</label><br>
+                    <label><input type="checkbox" name="abschlussbesprechung"> Abschlussbesprechung</label>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- Buttons -->
+        <div class="mt-6 flex items-center">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">💾 Speichern</button>
+            <a href="/profil/{{ schueler.id }}" class="ml-4 text-blue-600 hover:underline">Zurück zum Profil</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>
