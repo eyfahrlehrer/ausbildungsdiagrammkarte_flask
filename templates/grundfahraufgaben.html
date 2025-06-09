@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Grundfahraufgaben</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800">
+<div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-6">🚗 Grundfahraufgaben</h1>
+
+    <form method="POST" action="/grundfahraufgaben_speichern/{{ schueler.id }}" class="space-y-6">
+
+        <fieldset class="bg-white p-4 rounded shadow">
+            <legend class="font-semibold text-lg mb-2">Rangier- und Wendemethoden</legend>
+            <div class="space-y-2">
+                <label class="block"><input type="checkbox" name="rechts_rueck_cke"> Rechts rückwärts um die Ecke</label>
+                <label class="block"><input type="checkbox" name="umkehren"> Umkehren</label>
+                <label class="block"><input type="checkbox" name="gefahrbremsung"> Gefahrbremsung</label>
+            </div>
+        </fieldset>
+
+        <fieldset class="bg-white p-4 rounded shadow">
+            <legend class="font-semibold text-lg mb-2">Einparken</legend>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    <label class="block"><input type="checkbox" name="quer_rechts_rueck"> Rechts rückwärts quer</label>
+                    <label class="block"><input type="checkbox" name="laengs_rechts_rueck"> Rechts rückwärts längs</label>
+                </div>
+                <div class="space-y-2">
+                    <label class="block"><input type="checkbox" name="quer_rechts_vorwaerts"> Rechts vorwärts quer</label>
+                    <label class="block"><input type="checkbox" name="laengs_rechts_vorwaerts"> Rechts vorwärts längs</label>
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="mt-6">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">💾 Speichern</button>
+            <a href="/profil/{{ schueler.id }}" class="ml-4 text-blue-600 hover:underline">Zurück zum Profil</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>
