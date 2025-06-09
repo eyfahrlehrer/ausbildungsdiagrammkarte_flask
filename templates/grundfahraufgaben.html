@@ -7,8 +7,25 @@
 </head>
 <body class="bg-gray-100 text-gray-800">
 <div class="max-w-4xl mx-auto p-6">
+
     <h1 class="text-2xl font-bold mb-6">🚗 Grundfahraufgaben</h1>
 
+    <!-- Fortschrittsanzeige -->
+    {% set grund_farbe = "bg-red-500" %}
+    {% if grundfahraufgaben_prozent >= 80 %}
+        {% set grund_farbe = "bg-green-500" %}
+    {% elif grundfahraufgaben_prozent >= 50 %}
+        {% set grund_farbe = "bg-yellow-400" %}
+    {% endif %}
+
+    <div class="mb-6">
+        <label class="block font-medium mb-1">Grundfahraufgaben: {{ grundfahraufgaben_abgeschlossen }}/{{ grundfahraufgaben_gesamt }}</label>
+        <div class="w-full bg-gray-200 rounded-full h-4">
+            <div class="{{ grund_farbe }} h-4 rounded-full transition-all duration-300" style="width: {{ grundfahraufgaben_prozent }}%;"></div>
+        </div>
+    </div>
+
+    <!-- Formular -->
     <form method="POST" action="/grundfahraufgaben_speichern/{{ schueler.id }}" class="space-y-6">
 
         <fieldset class="bg-white p-4 rounded shadow">
