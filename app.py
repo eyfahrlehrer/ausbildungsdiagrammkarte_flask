@@ -87,29 +87,32 @@ def login():
             nutzername = request.form["nutzername"]
             passwort = request.form["passwort"]
 
-            print(f"[Login-Log] Nutzername erhalten: {nutzername}")
+            print(f"[Login-DEBUG] Nutzername erhalten: {nutzername}")
+            
+            print("[Login-DEBUG] Starte DB-Abfrage...")
             user = db.session.query(User).filter_by(nutzername=nutzername).first()
-            print(f"[Login-Log] Benutzer gefunden: {bool(user)}")
+            print("[Login-DEBUG] DB-Abfrage abgeschlossen")
 
             if not user:
+                print("[Login-DEBUG] Nutzername nicht gefunden")
                 return render_template("login.html", error="❌ Nutzername nicht gefunden")
+
+            print("[Login-DEBUG] Passwort wird geprüft...")
             if not check_password_hash(user.passwort_hash, passwort):
+                print("[Login-DEBUG] Passwort ist falsch")
                 return render_template("login.html", error="❌ Passwort ist falsch")
 
+            print("[Login-DEBUG] Login erfolgreich – Session wird gesetzt")
             session["user_id"] = user.id
             session["rolle_id"] = user.rolle_id
             return redirect(url_for("dashboard"))
 
         except Exception as e:
-            print(f"[Login-Fehler] {e}")
+            print(f"[Login-FEHLER] {e}")
             return "Interner Serverfehler", 500
 
     return render_template("login.html")
 
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("login"))
 
 @app.route("/dashboard")
 def dashboard():
