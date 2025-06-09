@@ -33,6 +33,21 @@
             </div>
         </div>
 
+        <!-- Leistungsstufe -->
+        {% set leistung_farbe = "bg-red-500" %}
+        {% if leistungsstufe_prozent >= 80 %}
+            {% set leistung_farbe = "bg-green-500" %}
+        {% elif leistungsstufe_prozent >= 50 %}
+            {% set leistung_farbe = "bg-yellow-400" %}
+        {% endif %}
+
+        <div class="mb-6">
+            <label class="block font-medium mb-1">Leistungsstufe: {{ leistungsstufe_abgeschlossen }}/{{ leistungsstufe_gesamt }}</label>
+            <div class="w-full bg-gray-200 rounded-full h-4">
+                <div class="{{ leistung_farbe }} h-4 rounded-full transition-all duration-300" style="width: {{ leistungsstufe_prozent }}%;"></div>
+            </div>
+        </div>
+
         <!-- Sonderfahrten -->
         <div class="mb-6">
             <p class="mb-1 font-semibold">Sonderfahrten:</p>
@@ -64,9 +79,6 @@
                                     </form>
                                 </div>
                             </div>
-                            {% if eintrag.notiz %}
-                                <p class="mt-2 text-sm text-gray-600">📝 {{ eintrag.notiz }}</p>
-                            {% endif %}
                         </li>
                     {% endfor %}
                 </ul>
