@@ -3,3 +3,4 @@ gunicorn
 python-dotenv
 psycopg2-binary
 flask_sqlalchemy
+Flask-Mail==0.9.1
