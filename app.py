@@ -51,7 +51,9 @@ class Fahrstundenprotokoll(db.Model):
 # ---------------------- Hilfsfunktionen ----------------------
 
 def get_checked_count(schueler_id, table_name):
-    result = db.session.execute(f"SELECT * FROM {table_name} WHERE schueler_id = :sid", {"sid": schueler_id}).fetchone()
+    result = db.session.execute(
+        f"SELECT * FROM {table_name} WHERE schueler_id = :sid", {"sid": schueler_id}
+    ).fetchone()
     if result:
         werte = dict(result)
         anzahl = sum(1 for k, v in werte.items() if k not in ('id', 'schueler_id') and v)
@@ -73,20 +75,26 @@ def login():
         user = User.query.filter_by(nutzername=nutzername).first()
 
         if not user:
-            return "❌ Nutzername nicht gefunden"
+            return render_template("login.html", error="❌ Nutzername nicht gefunden")
         if not check_password_hash(user.passwort_hash, passwort):
-            return "❌ Passwort falsch"
-        
+            return render_template("login.html", error="❌ Passwort ist falsch")
+
         session["user_id"] = user.id
         session["rolle_id"] = user.rolle_id
         return redirect(url_for("dashboard"))
 
     return render_template("login.html")
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("login"))
 
 @app.route("/dashboard")
 def dashboard():
-    return "Dashboard – Zugang erfolgreich"
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+    return "✅ Dashboard – Login erfolgreich! User-ID: {} / Rolle-ID: {}".format(session["user_id"], session["rolle_id"])
 
 @app.route("/profil/<int:schueler_id>")
 def profil(schueler_id):
@@ -107,11 +115,6 @@ def profil(schueler_id):
                            daemmerung=sonderfahrten["Dämmerung"],
                            **{f"{bereich}_abgeschlossen": fortschritte[bereich][0] for bereich in bereiche},
                            **{f"{bereich}_prozent": fortschritte[bereich][1] for bereich in bereiche})
-
-
-
-# Weitere Routen wie /aufbaustufe/<id>, /grundfahraufgaben/<id>, /technik/<id> etc.
-# sind analog zur Route /reifestufe/<id> umzusetzen.
 
 if __name__ == "__main__":
     app.run(debug=True)
