@@ -139,3 +139,27 @@ def profil(schueler_id):
     fortschritte = {bereich: get_checked_count(schueler_id, bereich) for bereich in bereiche}
 
     return re
+
+@app.route("/stammdaten", methods=["GET", "POST"])
+def stammdaten():
+    if request.method == "POST":
+        try:
+            schueler = Schueler(
+                vorname=request.form["vorname"],
+                name=request.form["name"],
+                geburtsdatum=request.form["geburtsdatum"],
+                adresse=request.form["adresse"],
+                plz=request.form["plz"],
+                ort=request.form["ort"],
+                telefon=request.form["telefon"],
+                sehhilfe=request.form["sehhilfe"],
+                klasse=request.form["klasse"]
+            )
+            db.session.add(schueler)
+            db.session.commit()
+            return redirect(url_for("dashboard"))
+        except Exception as e:
+            print(f"[Stammdaten-FEHLER] {e}")
+            return "Fehler beim Speichern", 500
+
+    return render_template("stammdaten.html")
