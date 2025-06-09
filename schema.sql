@@ -1,3 +1,5 @@
+psql $DATABASE_URL < schema.sql
+
 -- Benutzerrollen-Tabelle (z. B. Superadmin, Fahrlehrer, Bürokraft, Schüler)
 CREATE TABLE rollen (
     id SERIAL PRIMARY KEY,
