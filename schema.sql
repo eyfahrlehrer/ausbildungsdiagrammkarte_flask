@@ -242,3 +242,16 @@ CREATE TABLE technik (
     warnweste BOOLEAN DEFAULT FALSE,
     witterung BOOLEAN DEFAULT FALSE
 );
+
+CREATE TABLE schueler (
+    id SERIAL PRIMARY KEY,
+    vorname VARCHAR(50),
+    name VARCHAR(50),
+    geburtsdatum VARCHAR(50),
+    adresse VARCHAR(100),
+    plz VARCHAR(10),
+    ort VARCHAR(100),
+    telefon VARCHAR(30),
+    sehhilfe VARCHAR(10),
+    klasse VARCHAR(10)
+);
