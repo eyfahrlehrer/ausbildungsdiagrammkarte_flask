@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Reifestufe</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800">
+<div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-6">🏁 Reifestufe</h1>
+
+    <form method="POST" action="/reifestufe/{{ schueler.id }}" class="space-y-6">
+
+        <fieldset class="bg-white p-4 rounded shadow">
+            <legend class="font-semibold text-lg mb-2">Komplexes Fahrverhalten</legend>
+            <div class="grid grid-cols-2 gap-4">
+                <label><input type="checkbox" name="selbststaendiges_fahren"> Selbstständiges Fahren</label>
+                <label><input type="checkbox" name="zielnavigation"> Zielnavigation</label>
+                <label><input type="checkbox" name="stresssituation"> Stresssituation meistern</label>
+                <label><input type="checkbox" name="routinen"> Routinen festigen</label>
+                <label><input type="checkbox" name="verhalten_pruefung"> Verhalten unter Prüfungsbedingungen</label>
+                <label><input type="checkbox" name="verkehrsanpassung"> Verkehrsflussanpassung</label>
+                <label><input type="checkbox" name="reflexion"> Selbstreflexion und Feedback</label>
+                <label><input type="checkbox" name="fahrfertigkeiten"> Fahrfertigkeiten festigen</label>
+            </div>
+        </fieldset>
+
+        <div class="mt-6">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">💾 Speichern</button>
+            <a href="/profil/{{ schueler.id }}" class="ml-4 text-blue-600 hover:underline">Zurück zum Profil</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>
