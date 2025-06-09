@@ -157,3 +157,52 @@ def leistungsstufe(schueler_id):
         return redirect(url_for("profil", schueler_id=schueler_id))
 
     return render_template("leistungsstufe.html", schueler=schueler, eintrag=result)
+
+
+@app.route("/grundfahraufgaben/<int:schueler_id>", methods=["GET", "POST"])
+def grundfahraufgaben(schueler_id):
+    schueler = Schueler.query.get_or_404(schueler_id)
+
+    result = db.session.execute("""
+        SELECT * FROM grundfahraufgaben WHERE schueler_id = :sid
+    """, {"sid": schueler_id}).fetchone()
+
+    if request.method == "POST":
+        daten = {
+            'rechts_rueckwaerts_ecke': 'rechts_rueckwaerts_ecke' in request.form,
+            'umkehren': 'umkehren' in request.form,
+            'gefahrbremsung': 'gefahrbremsung' in request.form,
+            'rechts_quer_rueck': 'rechts_quer_rueck' in request.form,
+            'rechts_laengs_rueck': 'rechts_laengs_rueck' in request.form,
+            'rechts_quer_vor': 'rechts_quer_vor' in request.form,
+            'rechts_laengs_vor': 'rechts_laengs_vor' in request.form,
+        }
+
+        if result:
+            db.session.execute("""
+                UPDATE grundfahraufgaben SET
+                    rechts_rueckwaerts_ecke = :rechts_rueckwaerts_ecke,
+                    umkehren = :umkehren,
+                    gefahrbremsung = :gefahrbremsung,
+                    rechts_quer_rueck = :rechts_quer_rueck,
+                    rechts_laengs_rueck = :rechts_laengs_rueck,
+                    rechts_quer_vor = :rechts_quer_vor,
+                    rechts_laengs_vor = :rechts_laengs_vor
+                WHERE schueler_id = :sid
+            """, {**daten, "sid": schueler_id})
+        else:
+            db.session.execute("""
+                INSERT INTO grundfahraufgaben (
+                    schueler_id, rechts_rueckwaerts_ecke, umkehren, gefahrbremsung,
+                    rechts_quer_rueck, rechts_laengs_rueck, rechts_quer_vor, rechts_laengs_vor
+                ) VALUES (
+                    :sid, :rechts_rueckwaerts_ecke, :umkehren, :gefahrbremsung,
+                    :rechts_quer_rueck, :rechts_laengs_rueck, :rechts_quer_vor, :rechts_laengs_vor
+                )
+            """, {**daten, "sid": schueler_id})
+
+        db.session.commit()
+        return redirect(url_for("profil", schueler_id=schueler_id))
+
+    return render_template("grundfahraufgaben.html", schueler=schueler, eintrag=result)
+
