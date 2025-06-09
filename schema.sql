@@ -202,3 +202,23 @@ CREATE TABLE IF NOT EXISTS autobahnfahrt (
     konfliktsituation BOOLEAN DEFAULT FALSE,
     verlassen_bab BOOLEAN DEFAULT FALSE
 );
+
+CREATE TABLE IF NOT EXISTS daemmerungfahrt (
+    id SERIAL PRIMARY KEY,
+    schueler_id INTEGER NOT NULL REFERENCES schueler(id) ON DELETE CASCADE,
+    beleuchtung BOOLEAN DEFAULT FALSE,
+    kontrolle BOOLEAN DEFAULT FALSE,
+    benutzung BOOLEAN DEFAULT FALSE,
+    einstellen BOOLEAN DEFAULT FALSE,
+    fernlicht BOOLEAN DEFAULT FALSE,
+    beleuchtete_strassen BOOLEAN DEFAULT FALSE,
+    unbeleuchtete_strassen BOOLEAN DEFAULT FALSE,
+    parken BOOLEAN DEFAULT FALSE,
+    schlechte_witterung BOOLEAN DEFAULT FALSE,
+    bahnuebergaenge BOOLEAN DEFAULT FALSE,
+    tiere BOOLEAN DEFAULT FALSE,
+    unbeleuchtete_verkehrsteilnehmer BOOLEAN DEFAULT FALSE,
+    blendung BOOLEAN DEFAULT FALSE,
+    orientierung BOOLEAN DEFAULT FALSE,
+    abschlussbesprechung BOOLEAN DEFAULT FALSE
+);
