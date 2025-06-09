@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Leistungsstufe – Ausbildungsdiagrammkarte</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+<div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-64 h-screen bg-white shadow-md p-4 hidden md:block">
+        <h2 class="text-xl font-bold mb-4">Navigation</h2>
+        <nav>
+            <a href="/grundstufe/{{ schueler.id }}" class="block py-2">Grundstufe</a>
+            <a href="/aufbaustufe/{{ schueler.id }}" class="block py-2">Aufbaustufe</a>
+            <a href="/leistungsstufe/{{ schueler.id }}" class="block py-2 font-bold">Leistungsstufe</a>
+            <a href="/sonderfahrten/{{ schueler.id }}" class="block py-2">Sonderfahrten</a>
+            <a href="/grundfahraufgaben/{{ schueler.id }}" class="block py-2">Grundfahraufgaben</a>
+            <a href="/reifestufe/{{ schueler.id }}" class="block py-2">Reifestufe</a>
+            <a href="/technik/{{ schueler.id }}" class="block py-2">Technik</a>
+        </nav>
+    </aside>
+
+    <!-- Hauptinhalt -->
+    <main class="flex-1 p-6">
+        <h1 class="text-3xl font-bold mb-6">Leistungsstufe</h1>
+        <form method="POST">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <fieldset class="bg-white p-4 rounded shadow">
+                    <legend class="text-lg font-semibold mb-2">Fahrverhalten & Einordnung</legend>
+                    <label class="block"><input type="checkbox" name="fahrbahnbenutzung"> Fahrbahnbenutzung</label>
+                    <label class="block"><input type="checkbox" name="einordnen"> Einordnen</label>
+                    <label class="block"><input type="checkbox" name="markierungen"> Markierungen</label>
+                    <label class="block"><input type="checkbox" name="fahrstreifenwechsel_links"> Fahrstreifenwechsel links</label>
+                    <label class="block"><input type="checkbox" name="fahrstreifenwechsel_rechts"> Fahrstreifenwechsel rechts</label>
+                    <label class="block"><input type="checkbox" name="vorbeifahren"> Vorbeifahren</label>
+                </fieldset>
+
+                <fieldset class="bg-white p-4 rounded shadow">
+                    <legend class="text-lg font-semibold mb-2">Abbiegen & Vorrang</legend>
+                    <label class="block"><input type="checkbox" name="abbiegen_rechts"> Abbiegen rechts</label>
+                    <label class="block"><input type="checkbox" name="abbiegen_links"> Abbiegen links</label>
+                    <label class="block"><input type="checkbox" name="abbiegen_mehrspurig"> Mehrspurig abbiegen</label>
+                    <label class="block"><input type="checkbox" name="radweg"> Radweg</label>
+                    <label class="block"><input type="checkbox" name="sonderfahrstreifen"> Sonderfahrstreifen</label>
+                    <label class="block"><input type="checkbox" name="strassenbahnen"> Straßenbahnen</label>
+                    <label class="block"><input type="checkbox" name="einbahnstrasse"> Einbahnstraße</label>
+                    <label class="block"><input type="checkbox" name="vorfahrt"> Vorfahrt</label>
+                </fieldset>
+
+                <fieldset class="bg-white p-4 rounded shadow">
+                    <legend class="text-lg font-semibold mb-2">Vorfahrtregelungen</legend>
+                    <label class="block"><input type="checkbox" name="rechts_vor_links"> Rechts vor Links</label>
+                    <label class="block"><input type="checkbox" name="verkehrszeichen"> Verkehrszeichen</label>
+                    <label class="block"><input type="checkbox" name="lichtzeichenanlage"> Lichtzeichenanlage</label>
+                    <label class="block"><input type="checkbox" name="polizeibeamter"> Polizeibeamter</label>
+                </fieldset>
+
+                <fieldset class="bg-white p-4 rounded shadow">
+                    <legend class="text-lg font-semibold mb-2">Verhalten & Rücksicht</legend>
+                    <label class="block"><input type="checkbox" name="fussgaengerueberwege"> Fußgängerüberwege</label>
+                    <label class="block"><input type="checkbox" name="kinder"> Kinder</label>
+                    <label class="block"><input type="checkbox" name="oeffentliche_verkehrsmittel"> Öffentliche Verkehrsmittel</label>
+                    <label class="block"><input type="checkbox" name="aeltere_behinderte"> Ältere/Behinderte</label>
+                    <label class="block"><input type="checkbox" name="bus"> Bus</label>
+                    <label class="block"><input type="checkbox" name="schulbus"> Schulbus</label>
+                    <label class="block"><input type="checkbox" name="radfahrer_mofa"> Radfahrer / Mofa</label>
+                    <label class="block"><input type="checkbox" name="einbahn_radfahrer"> Einbahnstraße / Radfahrer</label>
+                    <label class="block"><input type="checkbox" name="verkehrsberuhigt"> Verkehrsberuhigter Bereich</label>
+                </fieldset>
+
+                <fieldset class="bg-white p-4 rounded shadow">
+                    <legend class="text-lg font-semibold mb-2">Schwierige Situationen</legend>
+                    <label class="block"><input type="checkbox" name="schwierige_verkehrsfuehrung"> Schwierige Verkehrsführung</label>
+                    <label class="block"><input type="checkbox" name="engpass"> Engpass</label>
+                    <label class="block"><input type="checkbox" name="kreisverkehr"> Kreisverkehr</label>
+                    <label class="block"><input type="checkbox" name="bahnuebergang"> Am Bahnübergang warten</label>
+                    <label class="block"><input type="checkbox" name="kritische_verkehrssituation"> Kritische Verkehrssituation</label>
+                    <label class="block"><input type="checkbox" name="hauptverkehrszeit"> Hauptverkehrszeiten</label>
+                    <label class="block"><input type="checkbox" name="partnerschaftlich"> Partnerschaftliches Verhalten</label>
+                    <label class="block"><input type="checkbox" name="schwung"> Schwung nutzen</label>
+                    <label class="block"><input type="checkbox" name="fussgaengerschutzbereich"> Fußgängerschutzbereich</label>
+                </fieldset>
+            </div>
+
+            <!-- Navigation unten -->
+            <div class="mt-6 flex justify-between">
+                <a href="{{ url_for('profil', schueler_id=schueler.id) }}" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-600">Zurück zum Profil</a>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Speichern</button>
+            </div>
+        </form>
+    </main>
+</div>
+</body>
+</html>
