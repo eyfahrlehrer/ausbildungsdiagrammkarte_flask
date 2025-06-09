@@ -99,7 +99,7 @@ def login():
                 return render_template("login.html", error="❌ Nutzername nicht gefunden")
 
             print("[Login-DEBUG] Passwort wird geprüft...")
-            if not check_password_hash(user.passwort_hash, passwort):
+            if not check_password_hash(user.password_hash, passwort):
                 print("[Login-DEBUG] Passwort ist falsch")
                 return render_template("login.html", error="❌ Passwort ist falsch")
 
