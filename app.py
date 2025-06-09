@@ -163,3 +163,4 @@ def stammdaten():
             return "Fehler beim Speichern", 500
 
     return render_template("stammdaten.html")
+
