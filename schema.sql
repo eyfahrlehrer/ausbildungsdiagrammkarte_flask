@@ -175,3 +175,30 @@ CREATE TABLE IF NOT EXISTS ueberlandfahrt (
     ablenkung BOOLEAN DEFAULT FALSE,
     orientierung BOOLEAN DEFAULT FALSE
 );
+
+CREATE TABLE IF NOT EXISTS autobahnfahrt (
+    id SERIAL PRIMARY KEY,
+    schueler_id INTEGER REFERENCES schueler(id) ON DELETE CASCADE,
+
+    fahrtplanung BOOLEAN DEFAULT FALSE,
+    einfahren_bab BOOLEAN DEFAULT FALSE,
+    fahrstreifenwechsel BOOLEAN DEFAULT FALSE,
+    geschwindigkeit BOOLEAN DEFAULT FALSE,
+    
+    abstand_vorne BOOLEAN DEFAULT FALSE,
+    abstand_hinten BOOLEAN DEFAULT FALSE,
+    abstand_seitlich BOOLEAN DEFAULT FALSE,
+
+    ueberholen BOOLEAN DEFAULT FALSE,
+    schilder_markierungen BOOLEAN DEFAULT FALSE,
+    vorbeifahren_anschlussstellen BOOLEAN DEFAULT FALSE,
+    rastplaetze BOOLEAN DEFAULT FALSE,
+    verhalten_unfaelle BOOLEAN DEFAULT FALSE,
+    dichter_verkehr BOOLEAN DEFAULT FALSE,
+    besondere_situationen BOOLEAN DEFAULT FALSE,
+
+    leistungsgrenze BOOLEAN DEFAULT FALSE,
+    ablenkung BOOLEAN DEFAULT FALSE,
+    konfliktsituation BOOLEAN DEFAULT FALSE,
+    verlassen_bab BOOLEAN DEFAULT FALSE
+);
