@@ -232,3 +232,44 @@ def autobahnfahrt(schueler_id):
         return redirect(url_for("profil", schueler_id=schueler_id))
 
     return render_template("autobahnfahrt.html", schueler=schueler, eintrag=result)
+
+@app.route("/daemmerungfahrt/<int:schueler_id>", methods=["GET", "POST"])
+def daemmerungfahrt(schueler_id):
+    schueler = Schueler.query.get_or_404(schueler_id)
+
+    result = db.session.execute("""
+        SELECT * FROM daemmerungfahrt WHERE schueler_id = :sid
+    """, {"sid": schueler_id}).fetchone()
+
+    if request.method == "POST":
+        daten = {
+            "beleuchtung": "beleuchtung" in request.form,
+            "kontrolle": "kontrolle" in request.form,
+            "benutzung": "benutzung" in request.form,
+            "einstellen": "einstellen" in request.form,
+            "fernlicht": "fernlicht" in request.form,
+            "beleuchtete_strassen": "beleuchtete_strassen" in request.form,
+            "unbeleuchtete_strassen": "unbeleuchtete_strassen" in request.form,
+            "parken": "parken" in request.form,
+            "schlechte_witterung": "schlechte_witterung" in request.form,
+            "bahnuebergaenge": "bahnuebergaenge" in request.form,
+            "tiere": "tiere" in request.form,
+            "unbeleuchtete_verkehrsteilnehmer": "unbeleuchtete_verkehrsteilnehmer" in request.form,
+            "blendung": "blendung" in request.form,
+            "orientierung": "orientierung" in request.form,
+            "abschlussbesprechung": "abschlussbesprechung" in request.form
+        }
+
+        if result:
+            update_stmt = """
+                UPDATE daemmerungfahrt SET
+                {}
+                WHERE schueler_id = :sid
+            """.format(", ".join([f"{k} = :{k}" for k in daten.keys()]))
+            daten["sid"] = schueler_id
+            db.session.execute(update_stmt, daten)
+        else:
+            feldnamen = ", ".join(["schueler_id"] + list(daten.keys()))
+            werte_namen = ", ".join([":schueler_id"] + [f":{k}" for k in daten.keys()])
+            daten["schueler_id"] = schueler_id
+            db.session.execu
