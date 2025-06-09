@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Autobahnfahrt</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800">
+<div class="max-w-5xl mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-6">🚧 Sonderfahrt: Autobahn</h1>
+
+    <form method="POST" action="/autobahnfahrt/{{ schueler.id }}" class="space-y-6">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Linke Spalte -->
+            <fieldset class="bg-white p-4 rounded shadow space-y-2">
+                <legend class="font-semibold text-lg mb-2">Allgemeine Autobahnfahrt</legend>
+                <label><input type="checkbox" name="fahrtplanung"> Fahrtplanung</label>
+                <label><input type="checkbox" name="einfahren_bab"> Einfahren in BAB</label>
+                <label><input type="checkbox" name="fahrstreifenwechsel"> Fahrstreifenwechsel</label>
+                <label><input type="checkbox" name="geschwindigkeit"> Geschwindigkeit</label>
+                
+                <label class="block mt-2 font-medium">Abstand:</label>
+                <label><input type="checkbox" name="abstand_vorne"> Vorne</label>
+                <label><input type="checkbox" name="abstand_hinten"> Hinten</label>
+                <label><input type="checkbox" name="abstand_seitlich"> Seitlich</label>
+
+                <label><input type="checkbox" name="ueberholen"> Überholen</label>
+                <label><input type="checkbox" name="schilder_markierungen"> Schilder / Markierungen</label>
+                <label><input type="checkbox" name="vorbeifahren_anschlussstellen"> Vorbeifahren an Anschlussstellen</label>
+                <label><input type="checkbox" name="rastplaetze"> Rastplätze</label>
+                <label><input type="checkbox" name="verhalten_unfaelle"> Verhalten bei Unfällen</label>
+                <label><input type="checkbox" name="dichter_verkehr"> Dichter Verkehr / Stau</label>
+                <label><input type="checkbox" name="besondere_situationen"> Besondere Situationen</label>
+            </fieldset>
+
+            <!-- Rechte Spalte -->
+            <fieldset class="bg-white p-4 rounded shadow space-y-2">
+                <legend class="font-semibold text-lg mb-2">Besondere Anforderungen</legend>
+                <label><input type="checkbox" name="leistungsgrenze"> Leistungsgrenze</label>
+                <label><input type="checkbox" name="ablenkung"> Ablenkung</label>
+                <label><input type="checkbox" name="konfliktsituation"> Konfliktsituation</label>
+                <label><input type="checkbox" name="verlassen_bab"> Verlassen der BAB</label>
+            </fieldset>
+        </div>
+
+        <div class="mt-6">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">💾 Speichern</button>
+            <a href="/profil/{{ schueler.id }}" class="ml-4 text-blue-600 hover:underline">Zurück zum Profil</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>
