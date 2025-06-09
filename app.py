@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from sqlalchemy import text
 import os
 
 # ---------------------- Flask App Setup ----------------------
@@ -143,7 +144,7 @@ def profil(schueler_id):
 @app.route("/test-db")
 def test_db():
     try:
-        result = db.session.execute("SELECT 1").scalar()
+        result = db.session.execute(text("SELECT 1")).scalar()
         return f"✅ Datenbankverbindung funktioniert: {result}"
     except Exception as e:
         return f"❌ Fehler bei DB-Zugriff: {e}", 500
