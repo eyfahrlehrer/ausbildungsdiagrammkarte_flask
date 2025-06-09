@@ -136,3 +136,14 @@ CREATE TABLE leistungsstufe (
     fussgaengerbereich BOOLEAN
 );
 
+CREATE TABLE IF NOT EXISTS grundfahraufgaben (
+    id SERIAL PRIMARY KEY,
+    schueler_id INTEGER REFERENCES schueler(id) ON DELETE CASCADE,
+    rechts_rueckwaerts_ecke BOOLEAN DEFAULT FALSE,
+    umkehren BOOLEAN DEFAULT FALSE,
+    gefahrbremsung BOOLEAN DEFAULT FALSE,
+    rechts_quer_rueck BOOLEAN DEFAULT FALSE,
+    rechts_laengs_rueck BOOLEAN DEFAULT FALSE,
+    rechts_quer_vor BOOLEAN DEFAULT FALSE,
+    rechts_laengs_vor BOOLEAN DEFAULT FALSE
+);
