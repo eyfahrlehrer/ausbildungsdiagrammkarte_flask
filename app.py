@@ -68,13 +68,21 @@ def home():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        user = User.query.filter_by(nutzername=request.form["nutzername"]).first()
-        if user and check_password_hash(user.passwort_hash, request.form["passwort"]):
-            session["user_id"] = user.id
-            session["rolle_id"] = user.rolle_id
-            return redirect(url_for("dashboard"))
-        return "Login fehlgeschlagen"
+        nutzername = request.form["nutzername"]
+        passwort = request.form["passwort"]
+        user = User.query.filter_by(nutzername=nutzername).first()
+
+        if not user:
+            return "❌ Nutzername nicht gefunden"
+        if not check_password_hash(user.passwort_hash, passwort):
+            return "❌ Passwort falsch"
+        
+        session["user_id"] = user.id
+        session["rolle_id"] = user.rolle_id
+        return redirect(url_for("dashboard"))
+
     return render_template("login.html")
+
 
 @app.route("/dashboard")
 def dashboard():
