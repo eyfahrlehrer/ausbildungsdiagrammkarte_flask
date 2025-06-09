@@ -1,69 +1,64 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <title>Fahrschüler anlegen</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100 text-gray-800">
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md">
+  <h2 class="text-2xl font-semibold mb-6">Fahrschüler anlegen</h2>
 
-    <div class="max-w-3xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-10">
-        <h1 class="text-2xl font-bold text-purple-700 mb-6">👤 Neuer Fahrschüler</h1>
-
-        <form method="POST" action="{{ url_for('stammdaten') }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-semibold">Vorname</label>
-                <input type="text" name="vorname" required class="w-full border rounded px-3 py-2">
-            </div>
-            <div>
-                <label class="block text-sm font-semibold">Nachname</label>
-                <input type="text" name="name" required class="w-full border rounded px-3 py-2">
-            </div>
-            <div>
-                <label class="block text-sm font-semibold">Geburtsdatum</label>
-                <input type="date" name="geburtsdatum" required class="w-full border rounded px-3 py-2">
-            </div>
-            <div>
-                <label class="block text-sm font-semibold">Adresse</label>
-                <input type="text" name="adresse" required class="w-full border rounded px-3 py-2">
-            </div>
-            <div>
-                <label class="block text-sm font-semibold">PLZ</label>
-                <input type="text" name="plz" required class="w-full border rounded px-3 py-2">
-            </div>
-            <div>
-                <label class="block text-sm font-semibold">Ort</label>
-                <input type="text" name="ort" required class="w-full border rounded px-3 py-2">
-            </div>
-            <div>
-                <label class="block text-sm font-semibold">Telefonnummer</label>
-                <input type="text" name="telefon" required class="w-full border rounded px-3 py-2">
-            </div>
-            <div>
-                <label class="block text-sm font-semibold">Sehhilfe</label>
-                <select name="sehhilfe" class="w-full border rounded px-3 py-2">
-                    <option value="ja">Ja</option>
-                    <option value="nein">Nein</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-semibold">Fahrerlaubnisklasse</label>
-                <select name="klasse" required class="w-full border rounded px-3 py-2">
-                    <option value="B">B</option>
-                    <option value="B197">B197</option>
-                </select>
-            </div>
-        </form>
-
-        <div class="flex justify-between mt-6">
-            <a href="{{ url_for('dashboard') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">
-                🔙 Zurück
-            </a>
-            <button type="submit" form="form" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded">
-                💾 Speichern
-            </button>
-        </div>
+  <form method="POST" action="{{ url_for('stammdaten') }}" class="space-y-4">
+    <div>
+      <label for="vorname" class="block text-sm font-medium">Vorname</label>
+      <input type="text" name="vorname" id="vorname" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
     </div>
 
-</body>
-</html>
+    <div>
+      <label for="name" class="block text-sm font-medium">Nachname</label>
+      <input type="text" name="name" id="name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+    </div>
+
+    <div>
+      <label for="geburtsdatum" class="block text-sm font-medium">Geburtsdatum</label>
+      <input type="date" name="geburtsdatum" id="geburtsdatum" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+    </div>
+
+    <div>
+      <label for="adresse" class="block text-sm font-medium">Straße und Hausnummer</label>
+      <input type="text" name="adresse" id="adresse" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label for="plz" class="block text-sm font-medium">PLZ</label>
+        <input type="text" name="plz" id="plz" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+      </div>
+      <div>
+        <label for="ort" class="block text-sm font-medium">Ort</label>
+        <input type="text" name="ort" id="ort" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+      </div>
+    </div>
+
+    <div>
+      <label for="telefon" class="block text-sm font-medium">Telefonnummer</label>
+      <input type="text" name="telefon" id="telefon" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+    </div>
+
+    <div>
+      <label for="sehhilfe" class="block text-sm font-medium">Sehhilfe (ja/nein)</label>
+      <select name="sehhilfe" id="sehhilfe" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+        <option value="ja">ja</option>
+        <option value="nein">nein</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="klasse" class="block text-sm font-medium">Fahrerlaubnisklasse</label>
+      <select name="klasse" id="klasse" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+        <option value="B">B</option>
+        <option value="B197">B197</option>
+      </select>
+    </div>
+
+    <div class="pt-4">
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Speichern</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
