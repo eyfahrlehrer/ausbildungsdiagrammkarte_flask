@@ -90,7 +90,7 @@ def profil(schueler_id):
 
     sonderfahrten = {typ: Fahrstundenprotokoll.query.filter_by(schueler_id=schueler_id, sonderfahrt_typ=typ).count() for typ in ["Überland", "Autobahn", "Dämmerung"]}
 
-    bereiche = ["aufbaustufe", "leistungsstufe", "grundfahraufgaben", "reifestufe"]
+    bereiche = ["aufbaustufe", "leistungsstufe", "grundfahraufgaben", "reifestufe", "technik"]
     fortschritte = {bereich: get_checked_count(schueler_id, bereich) for bereich in bereiche}
 
     return render_template("profil.html", schueler=schueler, protokolle=protokolle,
@@ -100,89 +100,5 @@ def profil(schueler_id):
                            aufbaustufe_abgeschlossen=fortschritte["aufbaustufe"][0], aufbaustufe_prozent=fortschritte["aufbaustufe"][1],
                            leistungsstufe_abgeschlossen=fortschritte["leistungsstufe"][0], leistungsstufe_prozent=fortschritte["leistungsstufe"][1],
                            grundfahraufgaben_abgeschlossen=fortschritte["grundfahraufgaben"][0], grundfahraufgaben_prozent=fortschritte["grundfahraufgaben"][1],
-                           reifestufe_abgeschlossen=fortschritte["reifestufe"][0], reifestufe_prozent=fortschritte["reifestufe"][1])
-
-@app.route("/reifestufe/<int:schueler_id>", methods=["GET", "POST"])
-def reifestufe(schueler_id):
-    schueler = Schueler.query.get_or_404(schueler_id)
-
-    result = db.session.execute("""
-        SELECT * FROM reifestufe WHERE schueler_id = :sid
-    """, {"sid": schueler_id}).fetchone()
-
-    if request.method == "POST":
-        daten = {
-            "mehrspuriges_abbiegen": "mehrspuriges_abbiegen" in request.form,
-            "baustellen": "baustellen" in request.form,
-            "verkehrsberuhigte_bereiche": "verkehrsberuhigte_bereiche" in request.form,
-            "verkehrsfluss_anpassen": "verkehrsfluss_anpassen" in request.form,
-            "starkes_verzoegern": "starkes_verzoegern" in request.form,
-            "fremdverhalten_erkennen": "fremdverhalten_erkennen" in request.form,
-            "situationsbeurteilung": "situationsbeurteilung" in request.form,
-            "selbstkontrolle": "selbstkontrolle" in request.form,
-            "notsituationen": "notsituationen" in request.form,
-            "situationsgerechtes_handeln": "situationsgerechtes_handeln" in request.form,
-            "sozialverhalten": "sozialverhalten" in request.form,
-            "rücksichtnahme": "rücksichtnahme" in request.form,
-            "situationen_bewerten": "situationen_bewerten" in request.form,
-            "sicherheitsabstand": "sicherheitsabstand" in request.form,
-            "abschluss": "abschluss" in request.form
-        }
-
-        if result:
-            db.session.execute("""
-                UPDATE reifestufe SET
-                {} WHERE schueler_id = :sid
-            """.format(", ".join([f"{k} = :{k}" for k in daten.keys()])), {**daten, "sid": schueler_id})
-        else:
-            db.session.execute("""
-                INSERT INTO reifestufe (schueler_id, {}) VALUES (:schueler_id, {})
-            """.format(", ".join(daten.keys()), ", ".join([f":{k}" for k in daten.keys()])), {"schueler_id": schueler_id, **daten})
-
-        db.session.commit()
-        return redirect(url_for("profil", schueler_id=schueler_id))
-
-    return render_template("reifestufe.html", schueler=schueler, eintrag=result)
-
-
-@app.route("/technik/<int:schueler_id>", methods=["GET", "POST"])
-def technik(schueler_id):
-    schueler = Schueler.query.get_or_404(schueler_id)
-
-    result = db.session.execute("""
-        SELECT * FROM technik WHERE schueler_id = :sid
-    """, {"sid": schueler_id}).fetchone()
-
-    if request.method == "POST":
-        daten = {
-            "reifen": "reifen" in request.form,
-            "beleuchtung": "beleuchtung" in request.form,
-            "bremsanlage": "bremsanlage" in request.form,
-            "lenkung": "lenkung" in request.form,
-            "flüssigkeiten": "flüssigkeiten" in request.form,
-            "kontrollleuchten": "kontrollleuchten" in request.form,
-            "hupe": "hupe" in request.form,
-            "scheibenwischer": "scheibenwischer" in request.form,
-            "warnblinkanlage": "warnblinkanlage" in request.form,
-            "motorraum": "motorraum" in request.form,
-            "sicherungen": "sicherungen" in request.form,
-            "verbandskasten": "verbandskasten" in request.form,
-            "warndreieck": "warndreieck" in request.form,
-            "warnweste": "warnweste" in request.form,
-            "witterung": "witterung" in request.form
-        }
-
-        if result:
-            db.session.execute("""
-                UPDATE technik SET
-                {} WHERE schueler_id = :sid
-            """.format(", ".join([f"{k} = :{k}" for k in daten.keys()])), {**daten, "sid": schueler_id})
-        else:
-            db.session.execute("""
-                INSERT INTO technik (schueler_id, {}) VALUES (:schueler_id, {})
-            """.format(", ".join(daten.keys()), ", ".join([f":{k}" for k in daten.keys()])), {"schueler_id": schueler_id, **daten})
-
-        db.session.commit()
-        return redirect(url_for("profil", schueler_id=schueler_id))
-
-    return render_template("technik.html", schueler=schueler, eintrag=result)
+                           reifestufe_abgeschlossen=fortschritte["reifestufe"][0], reifestufe_prozent=fortschritte["reifestufe"][1],
+                           technik_abgeschlossen=fortschritte["technik"][0], technik_prozent=fortschritte["technik"][1])
