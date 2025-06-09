@@ -83,18 +83,26 @@ def home():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        nutzername = request.form["nutzername"]
-        passwort = request.form["passwort"]
-        user = User.query.filter_by(nutzername=nutzername).first()
+        try:
+            nutzername = request.form["nutzername"]
+            passwort = request.form["passwort"]
 
-        if not user:
-            return render_template("login.html", error="❌ Nutzername nicht gefunden")
-        if not check_password_hash(user.passwort_hash, passwort):
-            return render_template("login.html", error="❌ Passwort ist falsch")
+            print(f"[Login-Log] Nutzername erhalten: {nutzername}")
+            user = db.session.query(User).filter_by(nutzername=nutzername).first()
+            print(f"[Login-Log] Benutzer gefunden: {bool(user)}")
 
-        session["user_id"] = user.id
-        session["rolle_id"] = user.rolle_id
-        return redirect(url_for("dashboard"))
+            if not user:
+                return render_template("login.html", error="❌ Nutzername nicht gefunden")
+            if not check_password_hash(user.passwort_hash, passwort):
+                return render_template("login.html", error="❌ Passwort ist falsch")
+
+            session["user_id"] = user.id
+            session["rolle_id"] = user.rolle_id
+            return redirect(url_for("dashboard"))
+
+        except Exception as e:
+            print(f"[Login-Fehler] {e}")
+            return "Interner Serverfehler", 500
 
     return render_template("login.html")
 
