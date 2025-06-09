@@ -150,5 +150,17 @@ def test_db():
         return f"❌ Fehler bei DB-Zugriff: {e}", 500
 
 
+# Am Ende von app.py:
 if __name__ == "__main__":
+    from werkzeug.security import generate_password_hash
+    from models import db, User
+
+    with app.app_context():
+        pw = generate_password_hash("!4?}g<{MLM1jYKUtp%4!(Q4H\"}pi+$3")
+        admin = User(nutzername="admin", password_hash=pw, rolle_id=1)
+        db.session.add(admin)
+        db.session.commit()
+        print("✅ Admin wurde neu erstellt!")
+
     app.run(debug=True)
+
