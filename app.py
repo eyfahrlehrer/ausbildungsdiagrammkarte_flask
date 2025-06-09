@@ -129,3 +129,58 @@ def profil(schueler_id):
         grundfahraufgaben_abgeschlossen=grundfahraufgaben_abgeschlossen,
         grundfahraufgaben_prozent=grundfahraufgaben_prozent
     )
+
+@app.route("/ueberlandfahrt/<int:schueler_id>", methods=["GET", "POST"])
+def ueberlandfahrt(schueler_id):
+    schueler = Schueler.query.get_or_404(schueler_id)
+
+    result = db.session.execute("""
+        SELECT * FROM ueberlandfahrt WHERE schueler_id = :sid
+    """, {"sid": schueler_id}).fetchone()
+
+    if request.method == "POST":
+        daten = {
+            "abstand_vorne": "abstand_vorne" in request.form,
+            "abstand_hinten": "abstand_hinten" in request.form,
+            "abstand_seitlich": "abstand_seitlich" in request.form,
+            "beobachtung_spiegel": "beobachtung_spiegel" in request.form,
+            "verkehrszeichen": "verkehrszeichen" in request.form,
+            "kurven": "kurven" in request.form,
+            "steigungen": "steigungen" in request.form,
+            "gefaelle": "gefaelle" in request.form,
+            "alleen": "alleen" in request.form,
+            "ueberholen": "ueberholen" in request.form,
+            "liegenbleiben_absichern": "liegenbleiben_absichern" in request.form,
+            "fussgaenger": "fussgaenger" in request.form,
+            "einfahren_ortschaft": "einfahren_ortschaft" in request.form,
+            "wildtiere": "wildtiere" in request.form,
+            "leistungsgrenze": "leistungsgrenze" in request.form,
+            "ablenkung": "ablenkung" in request.form,
+            "orientierung": "orientierung" in request.form
+        }
+
+        if result:
+            # Update
+            update_stmt = """
+                UPDATE ueberlandfahrt SET
+                {}
+                WHERE schueler_id = :sid
+            """.format(", ".join([f"{k} = :{k}" for k in daten.keys()]))
+
+            daten["sid"] = schueler_id
+            db.session.execute(update_stmt, daten)
+        else:
+            # Insert
+            feldnamen = ", ".join(["schueler_id"] + list(daten.keys()))
+            werte_namen = ", ".join([":schueler_id"] + [f":{k}" for k in daten.keys()])
+            daten["schueler_id"] = schueler_id
+
+            db.session.execute(f"""
+                INSERT INTO ueberlandfahrt ({feldnamen})
+                VALUES ({werte_namen})
+            """, daten)
+
+        db.session.commit()
+        return redirect(url_for("profil", schueler_id=schueler_id))
+
+    return render_template("ueberlandfahrt.html", schueler=schueler, eintrag=result)
