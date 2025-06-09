@@ -1,0 +1,53 @@
+<!-- HTML: ueberlandfahrt.html -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Überlandfahrt</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800">
+<div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-6">🚗 Überlandfahrt</h1>
+    <form method="POST">
+        <fieldset class="bg-white p-4 rounded shadow mb-4">
+            <legend class="font-semibold text-lg mb-2">Abstand</legend>
+            <label class="block"><input type="checkbox" name="abstand_vorne"> Vorne</label>
+            <label class="block"><input type="checkbox" name="abstand_hinten"> Hinten</label>
+            <label class="block"><input type="checkbox" name="abstand_seitlich"> Seitlich</label>
+        </fieldset>
+
+        <fieldset class="bg-white p-4 rounded shadow mb-4">
+            <legend class="font-semibold text-lg mb-2">Fahrsituationen</legend>
+            <label class="block"><input type="checkbox" name="beobachtung_spiegel"> Beobachtung Spiegel</label>
+            <label class="block"><input type="checkbox" name="verkehrszeichen"> Verkehrszeichen</label>
+            <label class="block"><input type="checkbox" name="kurven"> Kurven</label>
+            <label class="block"><input type="checkbox" name="steigungen"> Steigungen</label>
+            <label class="block"><input type="checkbox" name="gefaelle"> Gefälle</label>
+            <label class="block"><input type="checkbox" name="alleen"> Alleen</label>
+            <label class="block"><input type="checkbox" name="ueberholen"> Überholen</label>
+        </fieldset>
+
+        <fieldset class="bg-white p-4 rounded shadow mb-4">
+            <legend class="font-semibold text-lg mb-2">Besondere Situationen</legend>
+            <label class="block"><input type="checkbox" name="liegenbleiben_absichern"> Liegenbleiben u. Absichern</label>
+            <label class="block"><input type="checkbox" name="fussgaenger"> Fußgänger</label>
+            <label class="block"><input type="checkbox" name="einfahren_ortschaft"> Einfahren in Ortschaften</label>
+            <label class="block"><input type="checkbox" name="tiere"> Wild/Tiere</label>
+        </fieldset>
+
+        <fieldset class="bg-white p-4 rounded shadow mb-4">
+            <legend class="font-semibold text-lg mb-2">Besondere Anforderungen</legend>
+            <label class="block"><input type="checkbox" name="leistungsgrenze"> Leistungsgrenze</label>
+            <label class="block"><input type="checkbox" name="ablenkung"> Ablenkung</label>
+            <label class="block"><input type="checkbox" name="orientierung"> Orientierung</label>
+        </fieldset>
+
+        <div class="mt-6">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Speichern</button>
+            <a href="/profil/{{ schueler.id }}" class="ml-4 text-blue-600 hover:underline">Zurück zum Profil</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>
