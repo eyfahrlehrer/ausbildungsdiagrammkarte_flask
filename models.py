@@ -14,7 +14,7 @@ class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     nutzername = db.Column(db.String(50), unique=True, nullable=False)
-    passwort_hash = db.Column(db.Text, nullable=False)
+    password_hash = db.Column(db.Text, nullable=False)
     rolle_id = db.Column(db.Integer, db.ForeignKey('rollen.id'), nullable=False)
     erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
 
