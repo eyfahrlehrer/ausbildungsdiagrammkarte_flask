@@ -160,21 +160,17 @@ def ueberlandfahrt(schueler_id):
         }
 
         if result:
-            # Update
             update_stmt = """
                 UPDATE ueberlandfahrt SET
                 {}
                 WHERE schueler_id = :sid
             """.format(", ".join([f"{k} = :{k}" for k in daten.keys()]))
-
             daten["sid"] = schueler_id
             db.session.execute(update_stmt, daten)
         else:
-            # Insert
             feldnamen = ", ".join(["schueler_id"] + list(daten.keys()))
             werte_namen = ", ".join([":schueler_id"] + [f":{k}" for k in daten.keys()])
             daten["schueler_id"] = schueler_id
-
             db.session.execute(f"""
                 INSERT INTO ueberlandfahrt ({feldnamen})
                 VALUES ({werte_namen})
@@ -184,3 +180,55 @@ def ueberlandfahrt(schueler_id):
         return redirect(url_for("profil", schueler_id=schueler_id))
 
     return render_template("ueberlandfahrt.html", schueler=schueler, eintrag=result)
+
+@app.route("/autobahnfahrt/<int:schueler_id>", methods=["GET", "POST"])
+def autobahnfahrt(schueler_id):
+    schueler = Schueler.query.get_or_404(schueler_id)
+
+    result = db.session.execute("""
+        SELECT * FROM autobahnfahrt WHERE schueler_id = :sid
+    """, {"sid": schueler_id}).fetchone()
+
+    if request.method == "POST":
+        daten = {
+            "fahrtplanung": "fahrtplanung" in request.form,
+            "einfahren_bab": "einfahren_bab" in request.form,
+            "fahrstreifenwechsel": "fahrstreifenwechsel" in request.form,
+            "geschwindigkeit": "geschwindigkeit" in request.form,
+            "abstand_vorne": "abstand_vorne" in request.form,
+            "abstand_hinten": "abstand_hinten" in request.form,
+            "abstand_seitlich": "abstand_seitlich" in request.form,
+            "ueberholen": "ueberholen" in request.form,
+            "schilder_markierungen": "schilder_markierungen" in request.form,
+            "vorbeifahren_anschlussstellen": "vorbeifahren_anschlussstellen" in request.form,
+            "rastplaetze": "rastplaetze" in request.form,
+            "verhalten_unfaelle": "verhalten_unfaelle" in request.form,
+            "dichter_verkehr": "dichter_verkehr" in request.form,
+            "besondere_situationen": "besondere_situationen" in request.form,
+            "leistungsgrenze": "leistungsgrenze" in request.form,
+            "ablenkung": "ablenkung" in request.form,
+            "konfliktsituation": "konfliktsituation" in request.form,
+            "verlassen_bab": "verlassen_bab" in request.form
+        }
+
+        if result:
+            update_stmt = """
+                UPDATE autobahnfahrt SET
+                {}
+                WHERE schueler_id = :sid
+            """.format(", ".join([f"{k} = :{k}" for k in daten.keys()]))
+            daten["sid"] = schueler_id
+            db.session.execute(update_stmt, daten)
+        else:
+            feldnamen = ", ".join(["schueler_id"] + list(daten.keys()))
+            werte_namen = ", ".join([":schueler_id"] + [f":{k}" for k in daten.keys()])
+            daten["schueler_id"] = schueler_id
+            db.session.execute(f"""
+                INSERT INTO autobahnfahrt ({feldnamen})
+                VALUES ({werte_namen})
+            """, daten)
+
+        db.session.commit()
+        return redirect(url_for("profil", schueler_id=schueler_id))
+
+    return render_template("autobahnfahrt.html", schueler=schueler, eintrag=result)
