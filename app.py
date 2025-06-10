@@ -127,6 +127,11 @@ def stammdaten():
 
     return render_template("stammdaten.html")
 
+@app.route("/create")
+def create_redirect():
+    return redirect(url_for("stammdaten"))
+
+
 # /create als Alias für /stammdaten
 @app.route("/create", methods=["GET", "POST"])
 def create():
