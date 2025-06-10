@@ -1,7 +1,16 @@
 from flask import render_template, request, redirect, url_for, session, flash
 from . import main
 from models import db, Schueler, Fahrstundenprotokoll
-from datetime import date
+from datetime import date, datetime
+
+# Hilfsfunktion: Alter berechnen
+def berechne_alter(geburtsdatum):
+    if not geburtsdatum:
+        return None
+    heute = date.today()
+    return heute.year - geburtsdatum.year - (
+        (heute.month, heute.day) < (geburtsdatum.month, geburtsdatum.day)
+    )
 
 # Startseite leitet zum Login
 @main.route("/")
@@ -14,7 +23,6 @@ def login():
     if request.method == "POST":
         username = request.form.get("nutzername")
         password = request.form.get("passwort")
-        # Dummy-Login für Entwicklung
         if username == "admin" and password == "admin":
             session["user_id"] = 1
             session["rolle_id"] = 1
@@ -52,14 +60,15 @@ def create():
         neuer_schueler = Schueler(
             vorname=request.form.get("vorname"),
             nachname=request.form.get("nachname"),
-            geburtsdatum=request.form.get("geburtsdatum"),
+            geburtsdatum=datetime.strptime(request.form.get("geburtsdatum"), "%Y-%m-%d").date(),
             adresse=request.form.get("adresse"),
             plz=request.form.get("plz"),
             ort=request.form.get("ort"),
             mobilnummer=request.form.get("mobilnummer"),
             sehhilfe=request.form.get("sehhilfe") == "ja",
             theorie_bestanden=request.form.get("theorie_bestanden") == "ja",
-            fahrerlaubnisklasse=request.form.get("fahrerlaubnisklasse")
+            fahrerlaubnisklasse=request.form.get("fahrerlaubnisklasse"),
+            geschlecht=request.form.get("geschlecht")
         )
         db.session.add(neuer_schueler)
         db.session.commit()
@@ -74,7 +83,7 @@ def schueler_liste():
         return redirect(url_for("main.login"))
 
     schueler = Schueler.query.order_by(Schueler.nachname.asc()).all()
-    return render_template("alle_schueler.html", schueler=schueler)
+    return render_template("alle_schueler.html", schueler=schueler, berechne_alter=berechne_alter)
 
 # Schülerprofil anzeigen
 @main.route("/profil/<int:schueler_id>")
