@@ -33,7 +33,7 @@ def login():
 
     return render_template("login.html")
 
-# Dashboard mit Live-Statistik
+# Dashboard mit Live-Statistik + letzte Protokolle
 @main.route("/dashboard")
 def dashboard():
     if "user_id" not in session:
@@ -44,12 +44,16 @@ def dashboard():
     offene_sonderfahrten = Fahrstundenprotokoll.query.filter(Fahrstundenprotokoll.sonderfahrt_typ != None).count()
     heutige_termine = Fahrstundenprotokoll.query.filter_by(datum=date.today().isoformat()).count()
 
+    # Letzte 5 Protokolle
+    letzte_protokolle = Fahrstundenprotokoll.query.order_by(Fahrstundenprotokoll.datum.desc()).limit(5).all()
+
     return render_template(
         "dashboard.html",
         anzahl_schueler=anzahl_schueler,
         bestandene=bestandene,
         offene_sonderfahrten=offene_sonderfahrten,
-        heutige_termine=heutige_termine
+        heutige_termine=heutige_termine,
+        letzte_protokolle=letzte_protokolle
     )
 
 # Neue Schüler anlegen
