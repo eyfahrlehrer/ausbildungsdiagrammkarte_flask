@@ -70,22 +70,50 @@ document.addEventListener("DOMContentLoaded", () => {
   const plzInput = document.getElementById("plz");
   const ortInput = document.getElementById("ort");
 
+  // ✅ & ❌ Symbole erstellen
+  const successBadge = document.createElement("span");
+  successBadge.textContent = "✅";
+  successBadge.style.marginLeft = "8px";
+  successBadge.style.color = "green";
+  successBadge.style.display = "none";
+
+  const errorMsg = document.createElement("div");
+  errorMsg.textContent = "PLZ ungültig oder Ort nicht gefunden.";
+  errorMsg.style.color = "red";
+  errorMsg.style.fontSize = "0.875rem";
+  errorMsg.style.marginTop = "4px";
+  errorMsg.style.display = "none";
+
+  ortInput.parentElement.appendChild(successBadge);
+  ortInput.parentElement.appendChild(errorMsg);
+
   plzInput.addEventListener("input", () => {
     const plz = plzInput.value.trim();
+    successBadge.style.display = "none";
+    errorMsg.style.display = "none";
+
     if (plz.length === 5) {
       fetch(`https://api.zippopotam.us/de/${plz}`)
         .then(response => {
-          if (!response.ok) throw new Error("PLZ nicht gefunden");
+          if (!response.ok) throw new Error("Nicht gefunden");
           return response.json();
         })
         .then(data => {
           const ort = data.places?.[0]["place name"];
-          if (ort) ortInput.value = ort;
+          if (ort) {
+            ortInput.value = ort;
+            successBadge.style.display = "inline";
+          } else {
+            ortInput.value = "";
+            errorMsg.style.display = "block";
+          }
         })
-        .catch(error => {
-          console.warn("Ort konnte nicht ermittelt werden:", error);
+        .catch(() => {
           ortInput.value = "";
+          errorMsg.style.display = "block";
         });
+    } else {
+      ortInput.value = "";
     }
   });
 });
