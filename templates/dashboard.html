@@ -8,6 +8,7 @@
 </head>
 <body class="bg-gray-100 text-gray-800">
     <div class="flex min-h-screen">
+
         <!-- Sidebar -->
         <aside class="w-64 bg-white shadow-lg hidden md:block">
             <div class="p-6 border-b">
@@ -25,18 +26,18 @@
         <main class="flex-1 p-6">
             <header class="mb-6">
                 <h2 class="text-xl font-semibold">Willkommen zurück, Fahrlehrer 👋</h2>
-                <p class="text-sm text-gray-500">Letzter Login: 09.06.2025 19:30 Uhr</p>
+                <p class="text-sm text-gray-500">Letzter Login: {{ session.get('login_time', 'unbekannt') }}</p>
             </header>
 
             <!-- Statistik-Kacheln -->
             <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <div class="bg-white p-4 rounded shadow">👨‍🎓 <strong>14</strong><br>Aktive Schüler</div>
-                <div class="bg-white p-4 rounded shadow">✅ <strong>6</strong><br>Bestandene Prüfungen</div>
-                <div class="bg-white p-4 rounded shadow">🚗 <strong>9</strong><br>Offene Sonderfahrten</div>
-                <div class="bg-white p-4 rounded shadow">📅 <strong>3</strong><br>Heutige Termine</div>
+                <div class="bg-white p-4 rounded shadow">👨‍🎓 <strong>{{ anzahl_schueler }}</strong><br>Aktive Schüler</div>
+                <div class="bg-white p-4 rounded shadow">✅ <strong>{{ bestandene }}</strong><br>Bestandene Prüfungen</div>
+                <div class="bg-white p-4 rounded shadow">🚗 <strong>{{ offene_sonderfahrten }}</strong><br>Offene Sonderfahrten</div>
+                <div class="bg-white p-4 rounded shadow">📅 <strong>{{ heutige_termine }}</strong><br>Heutige Termine</div>
             </section>
 
-            <!-- Letzte Aktivitäten -->
+            <!-- Letzte Aktivitäten (Platzhalter) -->
             <section class="mb-6">
                 <h3 class="text-lg font-bold mb-2">Letzte Aktivitäten</h3>
                 <div class="bg-white rounded shadow overflow-x-auto">
@@ -56,23 +57,22 @@
                                 <td class="px-4 py-2">Heute, 15:30 Uhr</td>
                                 <td class="px-4 py-2"><a href="/profil/70" class="text-blue-600">Profil öffnen</a></td>
                             </tr>
-                            <!-- Weitere Einträge hier -->
                         </tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- Heutige Termine -->
+            <!-- Heutige Fahrten (Platzhalter) -->
             <section class="mb-6">
                 <h3 class="text-lg font-bold mb-2">Heutige Fahrten</h3>
                 <ul class="bg-white rounded shadow divide-y">
-                    <li class="p-4">🚗 <strong>Lisa Schmidt</strong> - 09:00 Uhr - Überlandfahrt</li>
-                    <li class="p-4">🚗 <strong>Tim Becker</strong> - 11:00 Uhr - Stadtfahrt</li>
-                    <li class="p-4">🚗 <strong>Anna Meier</strong> - 13:00 Uhr - Schaltkompetenz</li>
+                    <li class="p-4">🚗 <strong>Lisa Schmidt</strong> – 09:00 Uhr – Überlandfahrt</li>
+                    <li class="p-4">🚗 <strong>Tim Becker</strong> – 11:00 Uhr – Stadtfahrt</li>
+                    <li class="p-4">🚗 <strong>Anna Meier</strong> – 13:00 Uhr – Schaltkompetenz</li>
                 </ul>
             </section>
 
-            <!-- Benachrichtigungen -->
+            <!-- Hinweise -->
             <section>
                 <h3 class="text-lg font-bold mb-2">🔔 Hinweise</h3>
                 <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4">
