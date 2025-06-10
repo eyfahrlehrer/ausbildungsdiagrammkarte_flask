@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% block content %}
 <div class="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md">
   <h2 class="text-2xl font-semibold mb-6">Fahrschüler anlegen</h2>
@@ -61,4 +62,32 @@
     </div>
   </form>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const plzInput = document.getElementById("plz");
+  const ortInput = document.getElementById("ort");
+
+  plzInput.addEventListener("input", () => {
+    const plz = plzInput.value.trim();
+    if (plz.length === 5) {
+      fetch(`https://api.zippopotam.us/de/${plz}`)
+        .then(response => {
+          if (!response.ok) throw new Error("PLZ nicht gefunden");
+          return response.json();
+        })
+        .then(data => {
+          const ort = data.places?.[0]["place name"];
+          if (ort) ortInput.value = ort;
+        })
+        .catch(error => {
+          console.warn("Ort konnte nicht ermittelt werden:", error);
+          ortInput.value = "";
+        });
+    }
+  });
+});
+</script>
 {% endblock %}
