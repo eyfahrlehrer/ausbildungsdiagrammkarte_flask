@@ -37,38 +37,44 @@
                 <div class="bg-white p-4 rounded shadow">📅 <strong>{{ heutige_termine }}</strong><br>Heutige Termine</div>
             </section>
 
-            <!-- Letzte Aktivitäten (Platzhalter) -->
+            <!-- Letzte Fahrstunden -->
             <section class="mb-6">
-                <h3 class="text-lg font-bold mb-2">Letzte Aktivitäten</h3>
+                <h3 class="text-lg font-bold mb-2">Letzte Fahrstunden</h3>
                 <div class="bg-white rounded shadow overflow-x-auto">
                     <table class="table-auto w-full text-sm">
                         <thead class="bg-gray-100">
                             <tr>
                                 <th class="px-4 py-2">Name</th>
-                                <th class="px-4 py-2">Letzte Aktion</th>
+                                <th class="px-4 py-2">Aktion</th>
                                 <th class="px-4 py-2">Zeit</th>
                                 <th class="px-4 py-2"></th>
                             </tr>
                         </thead>
                         <tbody>
+                            {% for eintrag in letzte_fahrstunden %}
                             <tr class="border-b">
-                                <td class="px-4 py-2">Max Müller</td>
+                                <td class="px-4 py-2">{{ eintrag.schuelername }}</td>
                                 <td class="px-4 py-2">Fahrstunde protokolliert</td>
-                                <td class="px-4 py-2">Heute, 15:30 Uhr</td>
-                                <td class="px-4 py-2"><a href="/profil/70" class="text-blue-600">Profil öffnen</a></td>
+                                <td class="px-4 py-2">{{ eintrag.datum.strftime("%d.%m.%Y %H:%M") }}</td>
+                                <td class="px-4 py-2"><a href="/profil/{{ eintrag.schueler_id }}" class="text-blue-600">Profil öffnen</a></td>
                             </tr>
+                            {% else %}
+                            <tr><td colspan="4" class="text-center p-4">Keine Einträge gefunden.</td></tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- Heutige Fahrten (Platzhalter) -->
+            <!-- Heutige Fahrten -->
             <section class="mb-6">
                 <h3 class="text-lg font-bold mb-2">Heutige Fahrten</h3>
                 <ul class="bg-white rounded shadow divide-y">
-                    <li class="p-4">🚗 <strong>Lisa Schmidt</strong> – 09:00 Uhr – Überlandfahrt</li>
-                    <li class="p-4">🚗 <strong>Tim Becker</strong> – 11:00 Uhr – Stadtfahrt</li>
-                    <li class="p-4">🚗 <strong>Anna Meier</strong> – 13:00 Uhr – Schaltkompetenz</li>
+                    {% for fahrt in heutige_fahrten %}
+                    <li class="p-4">🚗 <strong>{{ fahrt.schuelername }}</strong> – {{ fahrt.zeit }} – {{ fahrt.typ }}</li>
+                    {% else %}
+                    <li class="p-4 text-gray-500">Keine Fahrten für heute geplant.</li>
+                    {% endfor %}
                 </ul>
             </section>
 
@@ -76,7 +82,7 @@
             <section>
                 <h3 class="text-lg font-bold mb-2">🔔 Hinweise</h3>
                 <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4">
-                    <p>2 Schüler haben noch keine Sonderfahrten begonnen!</p>
+                    <p>{{ hinweis_text }}</p>
                 </div>
             </section>
         </main>
