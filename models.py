@@ -1,7 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from main.models import db, Schueler, Fahrstundenprotokoll
-
 
 db = SQLAlchemy()
 
