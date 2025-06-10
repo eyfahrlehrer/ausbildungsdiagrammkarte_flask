@@ -7,6 +7,24 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
+
+    <!-- 🔔 Flash-Meldungen -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="fixed top-4 left-1/2 transform -translate-x-1/2 w-full max-w-md z-50">
+          {% for category, message in messages %}
+            <div class="mb-2 p-4 rounded shadow-md text-sm
+                        {% if category == 'success' %}bg-green-100 text-green-800 border-l-4 border-green-500
+                        {% elif category == 'danger' %}bg-red-100 text-red-800 border-l-4 border-red-500
+                        {% elif category == 'info' %}bg-blue-100 text-blue-800 border-l-4 border-blue-500
+                        {% else %}bg-gray-100 text-gray-800 border-l-4 border-gray-400{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
     <div class="flex min-h-screen">
 
         <!-- Sidebar -->
@@ -45,36 +63,34 @@
                         <thead class="bg-gray-100">
                             <tr>
                                 <th class="px-4 py-2">Name</th>
-                                <th class="px-4 py-2">Aktion</th>
+                                <th class="px-4 py-2">Letzte Aktion</th>
                                 <th class="px-4 py-2">Zeit</th>
                                 <th class="px-4 py-2"></th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for eintrag in letzte_fahrstunden %}
+                            {% for eintrag in letzte_protokolle %}
                             <tr class="border-b">
-                                <td class="px-4 py-2">{{ eintrag.schuelername }}</td>
-                                <td class="px-4 py-2">Fahrstunde protokolliert</td>
-                                <td class="px-4 py-2">{{ eintrag.datum.strftime("%d.%m.%Y %H:%M") }}</td>
-                                <td class="px-4 py-2"><a href="/profil/{{ eintrag.schueler_id }}" class="text-blue-600">Profil öffnen</a></td>
+                                <td class="px-4 py-2">{{ eintrag.schueler.nachname }} {{ eintrag.schueler.vorname }}</td>
+                                <td class="px-4 py-2">{{ eintrag.inhalt }}</td>
+                                <td class="px-4 py-2">{{ eintrag.datum.strftime('%d.%m.%Y') }}</td>
+                                <td class="px-4 py-2">
+                                    <a href="/profil/{{ eintrag.schueler.id }}" class="text-blue-600 hover:underline">Profil öffnen</a>
+                                </td>
                             </tr>
-                            {% else %}
-                            <tr><td colspan="4" class="text-center p-4">Keine Einträge gefunden.</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- Heutige Fahrten -->
+            <!-- Heutige Fahrten (Platzhalter oder dynamisch ergänzen) -->
             <section class="mb-6">
                 <h3 class="text-lg font-bold mb-2">Heutige Fahrten</h3>
                 <ul class="bg-white rounded shadow divide-y">
-                    {% for fahrt in heutige_fahrten %}
-                    <li class="p-4">🚗 <strong>{{ fahrt.schuelername }}</strong> – {{ fahrt.zeit }} – {{ fahrt.typ }}</li>
-                    {% else %}
-                    <li class="p-4 text-gray-500">Keine Fahrten für heute geplant.</li>
-                    {% endfor %}
+                    <li class="p-4">🚗 <strong>Lisa Schmidt</strong> – 09:00 Uhr – Überlandfahrt</li>
+                    <li class="p-4">🚗 <strong>Tim Becker</strong> – 11:00 Uhr – Stadtfahrt</li>
+                    <li class="p-4">🚗 <strong>Anna Meier</strong> – 13:00 Uhr – Schaltkompetenz</li>
                 </ul>
             </section>
 
@@ -82,7 +98,7 @@
             <section>
                 <h3 class="text-lg font-bold mb-2">🔔 Hinweise</h3>
                 <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4">
-                    <p>{{ hinweis_text }}</p>
+                    <p>2 Schüler haben noch keine Sonderfahrten begonnen!</p>
                 </div>
             </section>
         </main>
