@@ -75,6 +75,35 @@ def create():
 
     return render_template("create.html")
 
+@main.route("/schueler")
+def schueler_liste():
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    schueler = Schueler.query.order_by(Schueler.nachname.asc()).all()
+
+    def alter_berechnen(geburtsdatum):
+        if not geburtsdatum:
+            return "?"
+        today = date.today()
+        return today.year - geburtsdatum.year - (
+            (today.month, today.day) < (geburtsdatum.month, geburtsdatum.day)
+        )
+
+    daten = []
+    for s in schueler:
+        daten.append({
+            "id": s.id,
+            "geschlecht": s.geschlecht,
+            "alter": alter_berechnen(s.geburtsdatum),
+            "vorname": s.vorname,
+            "nachname": s.nachname,
+            "klasse": s.fahrerlaubnisklasse
+        })
+
+    return render_template("alle_schueler.html", schueler=daten)
+
+
 # Alle Schüler auflisten
 @main.route("/schueler")
 def schueler_liste():
