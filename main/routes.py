@@ -31,3 +31,9 @@ def dashboard():
     if "user_id" not in session:
         return redirect(url_for("main.login"))  # Wenn nicht eingeloggt → Login-Seite
     return render_template("dashboard.html")     # Wenn eingeloggt → Dashboard zeigen
+
+@main.route("/dashboard")
+def dashboard():
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+    return render_template("dashboard.html")
