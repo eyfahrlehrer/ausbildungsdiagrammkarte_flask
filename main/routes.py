@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for, session, flash
 from . import main
 from models import db, Schueler, Fahrstundenprotokoll
-from datetime import date, datetime
+from datetime import date
 
 # Globale Template-Funktion zur Altersberechnung
 @main.app_template_global()
@@ -11,12 +11,10 @@ def berechne_alter(geburtsdatum):
     today = date.today()
     return today.year - geburtsdatum.year - ((today.month, today.day) < (geburtsdatum.month, geburtsdatum.day))
 
-
 # Startseite → Weiterleitung zum Login
 @main.route("/")
 def home():
     return redirect(url_for("main.login"))
-
 
 # Login (Dummy für Entwicklung)
 @main.route("/login", methods=["GET", "POST"])
@@ -34,7 +32,6 @@ def login():
             flash("❌ Ungültige Anmeldedaten", "danger")
 
     return render_template("login.html")
-
 
 # Dashboard mit Live-Statistik
 @main.route("/dashboard")
@@ -54,7 +51,6 @@ def dashboard():
         offene_sonderfahrten=offene_sonderfahrten,
         heutige_termine=heutige_termine
     )
-
 
 # Neue Schüler anlegen
 @main.route("/create", methods=["GET", "POST"])
@@ -83,29 +79,25 @@ def create():
 
     return render_template("create.html")
 
-
-# Schülerliste anzeigen (modern & bunt)
+# Schülerliste anzeigen
 @main.route("/schueler")
 def schueler_liste():
     if "user_id" not in session:
         return redirect(url_for("main.login"))
 
     schueler = Schueler.query.order_by(Schueler.nachname.asc()).all()
-
     daten = []
     for s in schueler:
-        alter = berechne_alter(s.geburtsdatum)
         daten.append({
             "id": s.id,
             "geschlecht": s.geschlecht,
-            "alter": alter,
+            "alter": berechne_alter(s.geburtsdatum),
             "vorname": s.vorname,
             "nachname": s.nachname,
             "klasse": s.fahrerlaubnisklasse
         })
 
     return render_template("alle_schueler.html", schueler=daten)
-
 
 # Einzelnes Schülerprofil
 @main.route("/profil/<int:schueler_id>")
@@ -117,7 +109,6 @@ def schueler_profil(schueler_id):
     protokolle = Fahrstundenprotokoll.query.filter_by(schueler_id=schueler.id).order_by(Fahrstundenprotokoll.datum.desc()).all()
 
     return render_template("profil.html", schueler=schueler, protokolle=protokolle)
-
 
 # Logout
 @main.route("/logout")
