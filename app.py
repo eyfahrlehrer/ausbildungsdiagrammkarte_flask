@@ -7,7 +7,7 @@ import os
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "fallback-secret-key")
 
-# Datenbank-URL vorbereiten
+# Datenbankverbindung sicherstellen
 raw_db_url = os.getenv("DATABASE_URL")
 if not raw_db_url:
     raise RuntimeError("❌ DATABASE_URL ist nicht gesetzt!")
@@ -20,7 +20,6 @@ if "?sslmode=" not in raw_db_url:
 
 app.config["SQLALCHEMY_DATABASE_URI"] = raw_db_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
 db = SQLAlchemy(app)
 
 # Datenbankmodelle
@@ -62,7 +61,7 @@ class Fahrstundenprotokoll(db.Model):
     notiz = db.Column(db.Text)
     erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
 
-# Fortschrittszähler
+# Progress-Helper (optional)
 def get_checked_count(schueler_id, table_name):
     result = db.session.execute(
         f"SELECT * FROM {table_name} WHERE schueler_id = :sid", {"sid": schueler_id}
@@ -74,39 +73,40 @@ def get_checked_count(schueler_id, table_name):
         return anzahl, int((anzahl / gesamt) * 100)
     return 0, 0
 
-# Startseite
+# ROUTEN
 @app.route("/")
 def home():
     return redirect(url_for("login"))
 
-# Login
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        nutzername = request.form["nutzername"]
-        passwort = request.form["passwort"]
+        try:
+            nutzername = request.form["nutzername"]
+            passwort = request.form["passwort"]
 
-        user = db.session.query(User).filter_by(nutzername=nutzername).first()
-        if not user:
-            return render_template("login.html", error="❌ Nutzername nicht gefunden")
+            user = db.session.query(User).filter_by(nutzername=nutzername).first()
+            if not user:
+                return render_template("login.html", error="❌ Nutzername nicht gefunden")
 
-        if not check_password_hash(user.password_hash, passwort):
-            return render_template("login.html", error="❌ Passwort ist falsch")
+            if not check_password_hash(user.password_hash, passwort):
+                return render_template("login.html", error="❌ Passwort ist falsch")
 
-        session["user_id"] = user.id
-        session["rolle_id"] = user.rolle_id
-        return redirect(url_for("dashboard"))
+            session["user_id"] = user.id
+            session["rolle_id"] = user.rolle_id
+            return redirect(url_for("dashboard"))
+
+        except Exception:
+            return "Interner Serverfehler", 500
 
     return render_template("login.html")
 
-# Dashboard
 @app.route("/dashboard")
 def dashboard():
     if "user_id" not in session:
         return redirect(url_for("login"))
     return render_template("dashboard.html")
 
-# Stammdaten-Formular
 @app.route("/stammdaten", methods=["GET", "POST"])
 def stammdaten():
     if request.method == "POST":
@@ -131,24 +131,15 @@ def stammdaten():
 def create_redirect():
     return redirect(url_for("stammdaten"))
 
-
-# /create als Alias für /stammdaten
-@app.route("/create", methods=["GET", "POST"])
-def create():
-    return stammdaten()
-
-# Alle Schüler anzeigen
 @app.route("/alle_schueler")
 def alle_schueler():
     schueler_liste = Schueler.query.all()
     return render_template("alle_schueler.html", schueler=schueler_liste)
 
-# Logout
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("login"))
 
-# App starten
 if __name__ == "__main__":
     app.run(debug=True)
