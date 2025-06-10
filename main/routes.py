@@ -25,3 +25,9 @@ def create():
         return redirect(url_for("main.dashboard"))
 
     return render_template("create.html")
+
+@main.route("/dashboard")
+def dashboard():
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))  # Wenn nicht eingeloggt → Login-Seite
+    return render_template("dashboard.html")     # Wenn eingeloggt → Dashboard zeigen
