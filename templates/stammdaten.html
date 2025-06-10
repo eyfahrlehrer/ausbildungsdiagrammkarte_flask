@@ -70,29 +70,41 @@ document.addEventListener("DOMContentLoaded", () => {
   const plzInput = document.getElementById("plz");
   const ortInput = document.getElementById("ort");
 
-  // ✅ & ❌ Symbole erstellen
+  // ✅ Erfolgs-Icon
   const successBadge = document.createElement("span");
-  successBadge.textContent = "✅";
-  successBadge.style.marginLeft = "8px";
-  successBadge.style.color = "green";
+  successBadge.innerHTML = "✅";
+  successBadge.classList.add("ml-2", "text-green-600", "text-lg", "align-middle");
   successBadge.style.display = "none";
 
+  // ❌ Fehlermeldung
   const errorMsg = document.createElement("div");
   errorMsg.textContent = "PLZ ungültig oder Ort nicht gefunden.";
-  errorMsg.style.color = "red";
-  errorMsg.style.fontSize = "0.875rem";
-  errorMsg.style.marginTop = "4px";
+  errorMsg.classList.add("text-red-600", "text-sm", "mt-1");
   errorMsg.style.display = "none";
 
-  ortInput.parentElement.appendChild(successBadge);
-  ortInput.parentElement.appendChild(errorMsg);
+  // ⏳ Lade-Symbol
+  const spinner = document.createElement("div");
+  spinner.className = "ml-2 inline-block w-4 h-4 border-2 border-t-transparent border-gray-400 rounded-full animate-spin";
+  spinner.style.display = "none";
+
+  // Einfügen neben das Ort-Feld
+  const ortContainer = ortInput.parentElement;
+  ortContainer.appendChild(spinner);
+  ortContainer.appendChild(successBadge);
+  ortContainer.appendChild(errorMsg);
 
   plzInput.addEventListener("input", () => {
     const plz = plzInput.value.trim();
+
+    // Reset
     successBadge.style.display = "none";
     errorMsg.style.display = "none";
+    spinner.style.display = "none";
+    ortInput.value = "";
 
     if (plz.length === 5) {
+      spinner.style.display = "inline-block";
+
       fetch(`https://api.zippopotam.us/de/${plz}`)
         .then(response => {
           if (!response.ok) throw new Error("Nicht gefunden");
@@ -104,18 +116,18 @@ document.addEventListener("DOMContentLoaded", () => {
             ortInput.value = ort;
             successBadge.style.display = "inline";
           } else {
-            ortInput.value = "";
             errorMsg.style.display = "block";
           }
         })
         .catch(() => {
-          ortInput.value = "";
           errorMsg.style.display = "block";
+        })
+        .finally(() => {
+          spinner.style.display = "none";
         });
-    } else {
-      ortInput.value = "";
     }
   });
 });
 </script>
 {% endblock %}
+
