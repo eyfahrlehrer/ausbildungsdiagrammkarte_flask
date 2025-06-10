@@ -3,14 +3,13 @@ from . import main
 from models import db, Schueler, Fahrstundenprotokoll
 from datetime import date, datetime
 
-# Hilfsfunktion: Alter berechnen
+# Hilfsfunktion zur Altersberechnung
+@main.app_template_global()
 def berechne_alter(geburtsdatum):
     if not geburtsdatum:
-        return None
-    heute = date.today()
-    return heute.year - geburtsdatum.year - (
-        (heute.month, heute.day) < (geburtsdatum.month, geburtsdatum.day)
-    )
+        return "?"
+    today = date.today()
+    return today.year - geburtsdatum.year - ((today.month, today.day) < (geburtsdatum.month, geburtsdatum.day))
 
 # Startseite leitet zum Login
 @main.route("/")
@@ -60,7 +59,7 @@ def create():
         neuer_schueler = Schueler(
             vorname=request.form.get("vorname"),
             nachname=request.form.get("nachname"),
-            geburtsdatum=datetime.strptime(request.form.get("geburtsdatum"), "%Y-%m-%d").date(),
+            geburtsdatum=request.form.get("geburtsdatum"),
             adresse=request.form.get("adresse"),
             plz=request.form.get("plz"),
             ort=request.form.get("ort"),
@@ -83,7 +82,7 @@ def schueler_liste():
         return redirect(url_for("main.login"))
 
     schueler = Schueler.query.order_by(Schueler.nachname.asc()).all()
-    return render_template("alle_schueler.html", schueler=schueler, berechne_alter=berechne_alter)
+    return render_template("alle_schueler.html", schueler=schueler)
 
 # Schülerprofil anzeigen
 @main.route("/profil/<int:schueler_id>")
