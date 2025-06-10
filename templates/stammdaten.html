@@ -1,133 +1,44 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md">
-  <h2 class="text-2xl font-semibold mb-6">Fahrschüler anlegen</h2>
 
-  <form method="POST" action="{{ url_for('stammdaten') }}" class="space-y-4">
-    <div>
-      <label for="vorname" class="block text-sm font-medium">Vorname</label>
-      <input type="text" name="vorname" id="vorname" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
-    </div>
+<div class="max-w-6xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md">
+  <h2 class="text-2xl font-bold mb-6 text-blue-800">🚗 Alle Fahrschüler</h2>
 
-    <div>
-      <label for="name" class="block text-sm font-medium">Nachname</label>
-      <input type="text" name="name" id="name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
-    </div>
-
-    <div>
-      <label for="geburtsdatum" class="block text-sm font-medium">Geburtsdatum</label>
-      <input type="date" name="geburtsdatum" id="geburtsdatum" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
-    </div>
-
-    <div>
-      <label for="adresse" class="block text-sm font-medium">Straße und Hausnummer</label>
-      <input type="text" name="adresse" id="adresse" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
-    </div>
-
-    <div class="grid grid-cols-2 gap-4">
-      <div>
-        <label for="plz" class="block text-sm font-medium">PLZ</label>
-        <input type="text" name="plz" id="plz" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
-      </div>
-      <div>
-        <label for="ort" class="block text-sm font-medium">Ort</label>
-        <input type="text" name="ort" id="ort" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
-      </div>
-    </div>
-
-    <div>
-      <label for="telefon" class="block text-sm font-medium">Telefonnummer</label>
-      <input type="text" name="telefon" id="telefon" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
-    </div>
-
-    <div>
-      <label for="sehhilfe" class="block text-sm font-medium">Sehhilfe (ja/nein)</label>
-      <select name="sehhilfe" id="sehhilfe" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
-        <option value="ja">ja</option>
-        <option value="nein">nein</option>
-      </select>
-    </div>
-
-    <div>
-      <label for="klasse" class="block text-sm font-medium">Fahrerlaubnisklasse</label>
-      <select name="klasse" id="klasse" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
-        <option value="B">B</option>
-        <option value="B197">B197</option>
-      </select>
-    </div>
-
-    <div class="pt-4">
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Speichern</button>
-    </div>
-  </form>
+  <table class="min-w-full table-auto border border-gray-200 shadow-sm rounded-lg">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Name</th>
+        <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Geburtsdatum</th>
+        <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Ort</th>
+        <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Telefon</th>
+        <th class="px-4 py-2 text-left text-sm font-medium text-gray-600">Klasse</th>
+        <th class="px-4 py-2 text-sm font-medium text-center text-gray-600">Aktionen</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200">
+      {% for s in schueler %}
+      <tr class="hover:bg-gray-50">
+        <td class="px-4 py-2">{{ s.vorname }} {{ s.nachname }}</td>
+        <td class="px-4 py-2">{{ s.geburtsdatum.strftime('%d.%m.%Y') if s.geburtsdatum else '' }}</td>
+        <td class="px-4 py-2">{{ s.ort }}</td>
+        <td class="px-4 py-2">{{ s.mobilnummer }}</td>
+        <td class="px-4 py-2 font-semibold text-purple-700">
+          {{ s.fahrerlaubnisklasse or '–' }}
+        </td>
+        <td class="px-4 py-2 text-center">
+          <a href="{{ url_for('main.schueler_bearbeiten', schueler_id=s.id) }}"
+             class="bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-1 rounded shadow">
+            Bearbeiten
+          </a>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="6" class="text-center py-4 text-gray-500">Keine Schüler gefunden.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
+
 {% endblock %}
-
-{% block scripts %}
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const plzInput = document.getElementById("plz");
-  const ortInput = document.getElementById("ort");
-
-  // ✅ Erfolgs-Icon
-  const successBadge = document.createElement("span");
-  successBadge.innerHTML = "✅";
-  successBadge.classList.add("ml-2", "text-green-600", "text-lg", "align-middle");
-  successBadge.style.display = "none";
-
-  // ❌ Fehlermeldung
-  const errorMsg = document.createElement("div");
-  errorMsg.textContent = "PLZ ungültig oder Ort nicht gefunden.";
-  errorMsg.classList.add("text-red-600", "text-sm", "mt-1");
-  errorMsg.style.display = "none";
-
-  // ⏳ Lade-Symbol
-  const spinner = document.createElement("div");
-  spinner.className = "ml-2 inline-block w-4 h-4 border-2 border-t-transparent border-gray-400 rounded-full animate-spin";
-  spinner.style.display = "none";
-
-  // Einfügen neben das Ort-Feld
-  const ortContainer = ortInput.parentElement;
-  ortContainer.appendChild(spinner);
-  ortContainer.appendChild(successBadge);
-  ortContainer.appendChild(errorMsg);
-
-  plzInput.addEventListener("input", () => {
-    const plz = plzInput.value.trim();
-
-    // Reset
-    successBadge.style.display = "none";
-    errorMsg.style.display = "none";
-    spinner.style.display = "none";
-    ortInput.value = "";
-
-    if (plz.length === 5) {
-      spinner.style.display = "inline-block";
-
-      fetch(`https://api.zippopotam.us/de/${plz}`)
-        .then(response => {
-          if (!response.ok) throw new Error("Nicht gefunden");
-          return response.json();
-        })
-        .then(data => {
-          const ort = data.places?.[0]["place name"];
-          if (ort) {
-            ortInput.value = ort;
-            successBadge.style.display = "inline";
-          } else {
-            errorMsg.style.display = "block";
-          }
-        })
-        .catch(() => {
-          errorMsg.style.display = "block";
-        })
-        .finally(() => {
-          spinner.style.display = "none";
-        });
-    }
-  });
-});
-</script>
-{% endblock %}
-
