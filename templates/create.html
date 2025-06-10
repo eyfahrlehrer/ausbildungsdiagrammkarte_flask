@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-lg">
+  <h2 class="text-2xl font-bold mb-6">Fahrschüler anlegen</h2>
+  <form method="POST" action="{{ url_for('main.create') }}" class="space-y-6">
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label for="vorname" class="block text-sm font-medium">Vorname</label>
+        <input type="text" name="vorname" id="vorname" required class="w-full p-2 border rounded">
+      </div>
+      <div>
+        <label for="nachname" class="block text-sm font-medium">Nachname</label>
+        <input type="text" name="nachname" id="nachname" required class="w-full p-2 border rounded">
+      </div>
+    </div>
+
+    <div>
+      <label for="geburtsdatum" class="block text-sm font-medium">Geburtsdatum</label>
+      <input type="date" name="geburtsdatum" id="geburtsdatum" class="w-full p-2 border rounded">
+    </div>
+
+    <div>
+      <label for="adresse" class="block text-sm font-medium">Adresse</label>
+      <input type="text" name="adresse" id="adresse" class="w-full p-2 border rounded">
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label for="plz" class="block text-sm font-medium">PLZ</label>
+        <input type="text" name="plz" id="plz" required class="w-full p-2 border rounded">
+      </div>
+      <div>
+        <label for="ort" class="block text-sm font-medium">Ort</label>
+        <input type="text" name="ort" id="ort" required class="w-full p-2 border rounded">
+      </div>
+    </div>
+
+    <div>
+      <label for="mobilnummer" class="block text-sm font-medium">Mobilnummer</label>
+      <input type="text" name="mobilnummer" id="mobilnummer" class="w-full p-2 border rounded">
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label for="sehhilfe" class="block text-sm font-medium">Sehhilfe</label>
+        <select name="sehhilfe" id="sehhilfe" class="w-full p-2 border rounded">
+          <option value="true">Ja</option>
+          <option value="false">Nein</option>
+        </select>
+      </div>
+      <div>
+        <label for="theorie_bestanden" class="block text-sm font-medium">Theorie bestanden</label>
+        <select name="theorie_bestanden" id="theorie_bestanden" class="w-full p-2 border rounded">
+          <option value="true">Ja</option>
+          <option value="false">Nein</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label for="fahrerlaubnisklasse" class="block text-sm font-medium">Fahrerlaubnisklasse</label>
+      <select name="fahrerlaubnisklasse" id="fahrerlaubnisklasse" class="w-full p-2 border rounded">
+        <option value="B">B</option>
+        <option value="BE">BE</option>
+        <option value="B197">B197</option>
+      </select>
+    </div>
+
+    <div class="pt-4">
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Speichern</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
