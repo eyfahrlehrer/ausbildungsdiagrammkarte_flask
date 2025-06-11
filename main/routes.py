@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, session, flash
 from . import main
-from models import db, Schueler, Fahrstundenprotokoll
+from models import db, Schueler, Fahrstundenprotokoll, Fahrzeug
 from datetime import date
 
 # Globale Template-Funktion zur Altersberechnung
@@ -112,7 +112,6 @@ def create():
 
     return render_template("create.html", errors={})
 
-
 # Schülerliste anzeigen
 @main.route("/schueler")
 def schueler_liste():
@@ -143,6 +142,34 @@ def schueler_profil(schueler_id):
     protokolle = Fahrstundenprotokoll.query.filter_by(schueler_id=schueler.id).order_by(Fahrstundenprotokoll.datum.desc()).all()
 
     return render_template("profil.html", schueler=schueler, protokolle=protokolle)
+
+# Fahrzeuge verwalten
+@main.route("/fahrzeuge", methods=["GET", "POST"])
+def fahrzeuge_verwalten():
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    if request.method == "POST":
+        bezeichnung = request.form.get("bezeichnung")
+        typ = request.form.get("typ")
+        kennzeichen = request.form.get("kennzeichen")
+
+        if bezeichnung:
+            neues_fahrzeug = Fahrzeug(
+                bezeichnung=bezeichnung,
+                typ=typ,
+                kennzeichen=kennzeichen
+            )
+            db.session.add(neues_fahrzeug)
+            db.session.commit()
+            flash("🚗 Fahrzeug erfolgreich hinzugefügt!", "success")
+        else:
+            flash("❗Bezeichnung ist erforderlich.", "warning")
+
+        return redirect(url_for("main.fahrzeuge_verwalten"))
+
+    fahrzeuge = Fahrzeug.query.all()
+    return render_template("fahrzeuge.html", fahrzeuge=fahrzeuge)
 
 # Logout
 @main.route("/logout")
