@@ -44,7 +44,6 @@ def dashboard():
     offene_sonderfahrten = Fahrstundenprotokoll.query.filter(Fahrstundenprotokoll.sonderfahrt_typ != None).count()
     heutige_termine = Fahrstundenprotokoll.query.filter_by(datum=date.today().isoformat()).count()
 
-    # Letzte 5 Protokolle
     letzte_protokolle = Fahrstundenprotokoll.query.order_by(Fahrstundenprotokoll.datum.desc()).limit(5).all()
 
     return render_template(
@@ -56,7 +55,7 @@ def dashboard():
         letzte_protokolle=letzte_protokolle
     )
 
-# Neue Schüler anlegen
+# Neue Schüler anlegen → Weiterleitung ins Profil
 @main.route("/create", methods=["GET", "POST"])
 def create():
     if "user_id" not in session:
@@ -71,15 +70,15 @@ def create():
             plz=request.form.get("plz"),
             ort=request.form.get("ort"),
             mobilnummer=request.form.get("mobilnummer"),
-            sehhilfe=request.form.get("sehhilfe") == "ja",
-            theorie_bestanden=request.form.get("theorie_bestanden") == "ja",
+            sehhilfe=request.form.get("sehhilfe") == "true",
+            theorie_bestanden=request.form.get("theorie_bestanden") == "true",
             fahrerlaubnisklasse=request.form.get("fahrerlaubnisklasse"),
             geschlecht=request.form.get("geschlecht")
         )
         db.session.add(neuer_schueler)
         db.session.commit()
         flash("👤 Neuer Schüler angelegt", "success")
-        return redirect(url_for("main.schueler_liste"))
+        return redirect(url_for("main.schueler_profil", schueler_id=neuer_schueler.id))
 
     return render_template("create.html")
 
@@ -103,7 +102,7 @@ def schueler_liste():
 
     return render_template("alle_schueler.html", schueler=daten)
 
-# Einzelnes Schülerprofil
+# Schülerprofil anzeigen
 @main.route("/profil/<int:schueler_id>")
 def schueler_profil(schueler_id):
     if "user_id" not in session:
