@@ -1,7 +1,7 @@
-from flask import render_template, request, redirect, url_for, session, flash
+from flask import render_template, request, redirect, url_for, session, flash, jsonify
 from . import main
 from models import db, Schueler, Fahrstundenprotokoll, Fahrzeug, Fahrstundenbuchung, FahrstundenSlot
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from sqlalchemy import extract
 
 # Globale Template-Funktion zur Altersberechnung
@@ -178,6 +178,41 @@ def fahrzeug_loeschen(fahrzeug_id):
     db.session.commit()
     flash("🗑️ Fahrzeug gelöscht.", "info")
     return redirect(url_for("main.fahrzeuge_verwalten"))
+
+@main.route("/api/slots")
+def api_slots():
+    if "user_id" not in session:
+        return jsonify([])
+
+    slots = FahrstundenSlot.query.order_by(FahrstundenSlot.datum, FahrstundenSlot.uhrzeit).all()
+
+    farben = {
+        "offen": "#10b981",
+        "reserviert": "#f59e0b",
+        "bestätigt": "#ef4444"
+    }
+
+    events = []
+    for slot in slots:
+        start = datetime.combine(slot.datum, slot.uhrzeit)
+        end = start + timedelta(minutes=45)
+
+        title = f"{slot.fahrzeug.bezeichnung} ({slot.status})"
+        if slot.schueler:
+            title += f" – {slot.schueler.vorname} {slot.schueler.nachname}"
+
+        events.append({
+            "id": slot.id,
+            "title": title,
+            "start": start.isoformat(),
+            "end": end.isoformat(),
+            "backgroundColor": farben.get(slot.status, "#9ca3af"),
+            "borderColor": "#111827",
+            "textColor": "#ffffff",
+            "url": url_for("main.schueler_profil", schueler_id=slot.schueler_id) if slot.schueler_id else None
+        })
+
+    return jsonify(events)
 
 @main.route("/slots-verwalten", methods=["GET", "POST"])
 def slots_verwalten():
