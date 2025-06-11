@@ -1,0 +1,47 @@
+<!-- templates/slots_verwalten.html -->
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-4">
+  <h2 class="text-2xl font-bold mb-4">📅 Fahrstunden-Slots verwalten</h2>
+
+  <form method="POST" class="bg-white shadow-md rounded-lg p-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label for="datum" class="block text-sm font-medium">Datum</label>
+        <input type="date" id="datum" name="datum" value="{{ today }}" class="mt-1 block w-full rounded border-gray-300">
+      </div>
+      <div>
+        <label for="uhrzeit" class="block text-sm font-medium">Uhrzeit</label>
+        <input type="time" id="uhrzeit" name="uhrzeit" required class="mt-1 block w-full rounded border-gray-300">
+      </div>
+      <div>
+        <label for="fahrzeug_id" class="block text-sm font-medium">Fahrzeug</label>
+        <select name="fahrzeug_id" id="fahrzeug_id" class="mt-1 block w-full rounded border-gray-300">
+          {% for fzg in fahrzeuge %}
+            <option value="{{ fzg.id }}">{{ fzg.bezeichnung }} ({{ fzg.kennzeichen }})</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="mt-4 text-right">
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded">➕ Slot hinzufügen</button>
+    </div>
+  </form>
+
+  <h3 class="text-lg font-semibold mb-2">🗓️ Verfügbare Slots</h3>
+  <ul class="space-y-2">
+    {% for slot in slots %}
+      <li class="p-3 bg-gray-100 rounded flex justify-between items-center">
+        <span>{{ slot.datum }} um {{ slot.uhrzeit.strftime('%H:%M') }} – {{ slot.fahrzeug.bezeichnung }}</span>
+        <form method="POST" action="{{ url_for('main.slot_loeschen', slot_id=slot.id) }}">
+          <button type="submit" class="text-red-600 hover:underline">🗑️ Löschen</button>
+        </form>
+      </li>
+    {% else %}
+      <li class="text-gray-500">Noch keine Slots angelegt.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
