@@ -71,3 +71,20 @@ class FahrstundenBuchung(db.Model):
     slot = db.relationship('FahrstundenSlot', backref='buchungen')
     schueler = db.relationship('Schueler', backref='buchungen')
 
+
+class Slot(db.Model):
+    __tablename__ = 'slots'
+
+    id = db.Column(db.Integer, primary_key=True)
+    datum = db.Column(db.Date, nullable=False)
+    uhrzeit = db.Column(db.Time, nullable=False)
+    fahrzeug_id = db.Column(db.Integer, db.ForeignKey('fahrzeuge.id'), nullable=False)
+    status = db.Column(db.String(20), default='offen')  # offen, reserviert, bestätigt
+    schueler_id = db.Column(db.Integer, db.ForeignKey('schueler.id'), nullable=True)
+    erstellt_am = db.Column(db.DateTime, default=datetime.utcnow)
+
+    fahrzeug = db.relationship('Fahrzeug', backref='slots')
+    schueler = db.relationship('Schueler', backref='slots')
+
+
+
