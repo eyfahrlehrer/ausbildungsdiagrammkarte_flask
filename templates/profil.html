@@ -1,4 +1,5 @@
-# Datei mit der HTML-Vorlage für die Profilseite speichern
+# Wir ergänzen die vorhandene HTML-Struktur der Profilseite um den Slot-Buchungsbereich
+
 profil_html_content = """<!DOCTYPE html>
 <html lang="de">
 <head>
@@ -74,6 +75,37 @@ profil_html_content = """<!DOCTYPE html>
             </ul>
         </div>
 
+        <!-- Slot-Buchung -->
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold mb-2">🔔 Verfügbare Fahrstunden</h2>
+            <form method="post" action="{{ url_for('main.slot_buchen', schueler_id=schueler.id) }}">
+                <table class="w-full mt-2 border">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="p-2">Datum</th>
+                            <th class="p-2">Uhrzeit</th>
+                            <th class="p-2">Fahrzeug</th>
+                            <th class="p-2"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for slot in freie_slots %}
+                        <tr class="bg-white border-b">
+                            <td class="p-2">{{ slot.datum.strftime('%d.%m.%Y') }}</td>
+                            <td class="p-2">{{ slot.uhrzeit.strftime('%H:%M') }}</td>
+                            <td class="p-2">{{ slot.fahrzeug.bezeichnung }}</td>
+                            <td class="p-2 text-right">
+                                <button type="submit" name="slot_id" value="{{ slot.id }}" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                                    Anfragen
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </form>
+        </div>
+
         <!-- Protokolleinträge -->
         <div class="mb-6">
             <p class="font-semibold mb-2">Fahrstundenprotokolle:</p>
@@ -107,7 +139,6 @@ profil_html_content = """<!DOCTYPE html>
 </html>
 """
 
+# Datei schreiben
 with open("/mnt/data/profil.html", "w", encoding="utf-8") as f:
     f.write(profil_html_content)
-
-"/mnt/data/profil.html"
