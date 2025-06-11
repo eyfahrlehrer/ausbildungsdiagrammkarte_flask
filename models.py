@@ -46,3 +46,28 @@ class Fahrstundenprotokoll(db.Model):
 
     schueler = db.relationship('Schueler', backref='protokolle')
     fahrzeug = db.relationship('Fahrzeug', backref='einsatzzeiten')
+
+class FahrstundenSlot(db.Model):
+    __tablename__ = 'fahrstunden_slots'
+
+    id = db.Column(db.Integer, primary_key=True)
+    datum = db.Column(db.Date, nullable=False)
+    uhrzeit = db.Column(db.Time, nullable=False)
+    fahrzeug_id = db.Column(db.Integer, db.ForeignKey('fahrzeuge.id'))
+    erstellt_von_user_id = db.Column(db.Integer)  # Fahrlehrer, der den Slot erstellt hat
+    vergeben = db.Column(db.Boolean, default=False)
+
+    fahrzeug = db.relationship('Fahrzeug', backref='slots')
+
+class FahrstundenBuchung(db.Model):
+    __tablename__ = 'fahrstunden_buchungen'
+
+    id = db.Column(db.Integer, primary_key=True)
+    slot_id = db.Column(db.Integer, db.ForeignKey('fahrstunden_slots.id'), nullable=False)
+    schueler_id = db.Column(db.Integer, db.ForeignKey('schueler.id'), nullable=False)
+    status = db.Column(db.String(20), default="angefragt")  # angefragt, bestätigt, abgelehnt
+    anfragezeit = db.Column(db.DateTime, default=datetime.utcnow)
+
+    slot = db.relationship('FahrstundenSlot', backref='buchungen')
+    schueler = db.relationship('Schueler', backref='buchungen')
+
