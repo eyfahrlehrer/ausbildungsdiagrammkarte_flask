@@ -1,8 +1,17 @@
 from flask import render_template, request, redirect, url_for, session, flash, jsonify
 from . import main
-from models import db, Schueler, Fahrstundenprotokoll, Fahrzeug, Fahrstundenbuchung, FahrstundenSlot
+from models import (
+    db,
+    Schueler,
+    Fahrzeug,
+    Fahrstundenprotokoll,
+    FahrstundenSlot,
+    FahrstundenBuchung,
+    Slot
+)
 from datetime import datetime, date, timedelta
 from sqlalchemy import extract
+
 
 # Globale Template-Funktion zur Altersberechnung
 @main.app_template_global()
