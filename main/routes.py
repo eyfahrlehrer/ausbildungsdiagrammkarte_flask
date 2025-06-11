@@ -271,3 +271,40 @@ def slots_verwalten():
     slots = FahrstundenSlot.query.order_by(FahrstundenSlot.datum, FahrstundenSlot.uhrzeit).all()
     return render_template("slots_verwalten.html", fahrzeuge=fahrzeuge, slots=slots)
 
+@main.route("/slots-verwalten", methods=["GET", "POST"])
+def slots_verwalten():
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    if request.method == "POST":
+        try:
+            datum = date.fromisoformat(request.form.get("datum"))
+            uhrzeit = datetime.strptime(request.form.get("uhrzeit"), "%H:%M").time()
+            fahrzeug_id = int(request.form.get("fahrzeug_id"))
+
+            neuer_slot = Slot(datum=datum, uhrzeit=uhrzeit, fahrzeug_id=fahrzeug_id)
+            db.session.add(neuer_slot)
+            db.session.commit()
+            flash("✅ Neuer Slot angelegt!", "success")
+        except Exception as e:
+            flash("❗ Fehler beim Erstellen des Slots", "danger")
+
+        return redirect(url_for("main.slots_verwalten"))
+
+    slots = Slot.query.order_by(Slot.datum.asc(), Slot.uhrzeit.asc()).all()
+    fahrzeuge = Fahrzeug.query.all()
+    today = date.today().strftime("%Y-%m-%d")
+
+    return render_template("slots_verwalten.html", slots=slots, fahrzeuge=fahrzeuge, today=today)
+
+@main.route("/slots-verwalten/delete/<int:slot_id>", methods=["POST"])
+def slot_loeschen(slot_id):
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    slot = Slot.query.get_or_404(slot_id)
+    db.session.delete(slot)
+    db.session.commit()
+    flash("🗑️ Slot gelöscht.", "info")
+    return redirect(url_for("main.slots_verwalten"))
+
