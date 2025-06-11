@@ -143,33 +143,57 @@ def schueler_profil(schueler_id):
 
     return render_template("profil.html", schueler=schueler, protokolle=protokolle)
 
-# Fahrzeuge verwalten
+# Fahrzeuge verwalten inkl. Bearbeiten und Löschen
 @main.route("/fahrzeuge", methods=["GET", "POST"])
 def fahrzeuge_verwalten():
     if "user_id" not in session:
         return redirect(url_for("main.login"))
 
+    bearbeite = None
+    edit_id = request.args.get("edit")
+    if edit_id:
+        bearbeite = Fahrzeug.query.get(edit_id)
+
     if request.method == "POST":
+        fahrzeug_id = request.form.get("fahrzeug_id")
         bezeichnung = request.form.get("bezeichnung")
         typ = request.form.get("typ")
         kennzeichen = request.form.get("kennzeichen")
 
-        if bezeichnung:
-            neues_fahrzeug = Fahrzeug(
-                bezeichnung=bezeichnung,
-                typ=typ,
-                kennzeichen=kennzeichen
-            )
-            db.session.add(neues_fahrzeug)
-            db.session.commit()
-            flash("🚗 Fahrzeug erfolgreich hinzugefügt!", "success")
-        else:
+        if not bezeichnung:
             flash("❗Bezeichnung ist erforderlich.", "warning")
-
-        return redirect(url_for("main.fahrzeuge_verwalten"))
+        else:
+            if fahrzeug_id:
+                fzg = Fahrzeug.query.get(fahrzeug_id)
+                if fzg:
+                    fzg.bezeichnung = bezeichnung
+                    fzg.typ = typ
+                    fzg.kennzeichen = kennzeichen
+                    flash("✏️ Fahrzeug aktualisiert!", "success")
+            else:
+                neues_fahrzeug = Fahrzeug(
+                    bezeichnung=bezeichnung,
+                    typ=typ,
+                    kennzeichen=kennzeichen
+                )
+                db.session.add(neues_fahrzeug)
+                flash("🚗 Neues Fahrzeug hinzugefügt!", "success")
+            db.session.commit()
+            return redirect(url_for("main.fahrzeuge_verwalten"))
 
     fahrzeuge = Fahrzeug.query.all()
-    return render_template("fahrzeuge.html", fahrzeuge=fahrzeuge)
+    return render_template("fahrzeuge.html", fahrzeuge=fahrzeuge, bearbeite=bearbeite)
+
+@main.route("/fahrzeuge/delete/<int:fahrzeug_id>", methods=["POST"])
+def fahrzeug_loeschen(fahrzeug_id):
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    fzg = Fahrzeug.query.get_or_404(fahrzeug_id)
+    db.session.delete(fzg)
+    db.session.commit()
+    flash("🗑️ Fahrzeug gelöscht.", "info")
+    return redirect(url_for("main.fahrzeuge_verwalten"))
 
 # Logout
 @main.route("/logout")
