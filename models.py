@@ -31,7 +31,6 @@ class Fahrzeug(db.Model):
 # Fahrstunden-Protokoll
 class Fahrstundenprotokoll(db.Model):
     __tablename__ = 'fahrstundenprotokoll'
-
     id = db.Column(db.Integer, primary_key=True)
     schueler_id = db.Column(db.Integer, db.ForeignKey('schueler.id'), nullable=False)
     datum = db.Column(db.Date, nullable=False)
@@ -47,9 +46,9 @@ class Fahrstundenprotokoll(db.Model):
     schueler = db.relationship('Schueler', backref='protokolle')
     fahrzeug = db.relationship('Fahrzeug', backref='einsatzzeiten')
 
+# Slot für freie Fahrstunden im Kalender
 class FahrstundenSlot(db.Model):
     __tablename__ = 'fahrstunden_slots'
-
     id = db.Column(db.Integer, primary_key=True)
     datum = db.Column(db.Date, nullable=False)
     uhrzeit = db.Column(db.Time, nullable=False)
@@ -57,11 +56,11 @@ class FahrstundenSlot(db.Model):
     erstellt_von_user_id = db.Column(db.Integer)  # Fahrlehrer, der den Slot erstellt hat
     vergeben = db.Column(db.Boolean, default=False)
 
-    fahrzeug = db.relationship('Fahrzeug', backref='slots')
+    fahrzeug = db.relationship('Fahrzeug', backref='fahrstunden_slots')
 
+# Buchung von Slots durch Schüler
 class FahrstundenBuchung(db.Model):
     __tablename__ = 'fahrstunden_buchungen'
-
     id = db.Column(db.Integer, primary_key=True)
     slot_id = db.Column(db.Integer, db.ForeignKey('fahrstunden_slots.id'), nullable=False)
     schueler_id = db.Column(db.Integer, db.ForeignKey('schueler.id'), nullable=False)
@@ -71,10 +70,9 @@ class FahrstundenBuchung(db.Model):
     slot = db.relationship('FahrstundenSlot', backref='buchungen')
     schueler = db.relationship('Schueler', backref='buchungen')
 
-
+# Alternative Slot-Definition (z. B. für manuell erstellte Termine)
 class Slot(db.Model):
     __tablename__ = 'slots'
-
     id = db.Column(db.Integer, primary_key=True)
     datum = db.Column(db.Date, nullable=False)
     uhrzeit = db.Column(db.Time, nullable=False)
@@ -85,6 +83,3 @@ class Slot(db.Model):
 
     fahrzeug = db.relationship('Fahrzeug', backref='slots')
     schueler = db.relationship('Schueler', backref='slots')
-
-
-
