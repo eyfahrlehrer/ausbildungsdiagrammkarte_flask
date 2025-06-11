@@ -1,7 +1,8 @@
 from flask import render_template, request, redirect, url_for, session, flash
 from . import main
-from models import db, Schueler, Fahrstundenprotokoll, Fahrzeug
+from models import db, Schueler, Fahrstundenprotokoll, Fahrzeug, Fahrstundenbuchung
 from datetime import datetime, date
+from sqlalchemy import extract
 
 # Globale Template-Funktion zur Altersberechnung
 @main.app_template_global()
@@ -129,7 +130,8 @@ def schueler_profil(schueler_id):
 
     schueler = Schueler.query.get_or_404(schueler_id)
     protokolle = Fahrstundenprotokoll.query.filter_by(schueler_id=schueler.id).order_by(Fahrstundenprotokoll.datum.desc()).all()
-    return render_template("profil.html", schueler=schueler, protokolle=protokolle)
+    buchungen = Fahrstundenbuchung.query.filter_by(schueler_id=schueler_id).order_by(Fahrstundenbuchung.datum, Fahrstundenbuchung.uhrzeit).all()
+    return render_template("profil.html", schueler=schueler, protokolle=protokolle, buchungen=buchungen)
 
 @main.route("/fahrzeuge", methods=["GET", "POST"])
 def fahrzeuge_verwalten():
@@ -200,3 +202,35 @@ def fahrzeug_verfuegbarkeit():
     }
 
     return render_template("fahrzeug_verfuegbarkeit.html", fahrzeuge=fahrzeuge, belegungen=belegungen, datum=datum_obj.strftime("%Y-%m-%d"))
+
+@main.route("/fahrstunde-buchen", methods=["POST"])
+def fahrstunde_buchen():
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    schueler_id = request.form.get("schueler_id")
+    fahrzeug_id = request.form.get("fahrzeug_id")
+    datum = request.form.get("datum")
+    uhrzeit = request.form.get("uhrzeit")
+
+    aktuelle_woche = datetime.now().isocalendar().week
+    buchungen_diese_woche = Fahrstundenbuchung.query.filter_by(schueler_id=schueler_id).filter(
+        extract("week", Fahrstundenbuchung.datum) == aktuelle_woche
+    ).count()
+
+    if buchungen_diese_woche >= 2:
+        flash("❌ Maximal 2 Buchungen pro Woche erlaubt.", "danger")
+        return redirect(url_for("main.schueler_profil", schueler_id=schueler_id))
+
+    neue_buchung = Fahrstundenbuchung(
+        schueler_id=schueler_id,
+        fahrzeug_id=fahrzeug_id,
+        datum=datum,
+        uhrzeit=uhrzeit,
+        status="pending",
+        angefragt_am=datetime.now()
+    )
+    db.session.add(neue_buchung)
+    db.session.commit()
+    flash("📆 Buchungsanfrage gespeichert. Wird geprüft.", "success")
+    return redirect(url_for("main.schueler_profil", schueler_id=schueler_id))
