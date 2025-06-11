@@ -234,3 +234,40 @@ def fahrstunde_buchen():
     db.session.commit()
     flash("📆 Buchungsanfrage gespeichert. Wird geprüft.", "success")
     return redirect(url_for("main.schueler_profil", schueler_id=schueler_id))
+
+@main.route("/slots-verwalten", methods=["GET", "POST"])
+def slots_verwalten():
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    from datetime import datetime, time
+
+    fahrzeuge = Fahrzeug.query.all()
+
+    if request.method == "POST":
+        datum = request.form.get("datum")
+        uhrzeit = request.form.get("uhrzeit")
+        fahrzeug_id = request.form.get("fahrzeug_id")
+
+        try:
+            datum_obj = datetime.strptime(datum, "%Y-%m-%d").date()
+            uhrzeit_obj = datetime.strptime(uhrzeit, "%H:%M").time()
+        except ValueError:
+            flash("❗ Ungültiges Datum oder Uhrzeit", "warning")
+            return redirect(url_for("main.slots_verwalten"))
+
+        neuer_slot = FahrstundenSlot(
+            datum=datum_obj,
+            uhrzeit=uhrzeit_obj,
+            fahrzeug_id=fahrzeug_id,
+            erstellt_von_user_id=session["user_id"],
+            vergeben=False
+        )
+        db.session.add(neuer_slot)
+        db.session.commit()
+        flash("✅ Neuer Slot erfolgreich erstellt!", "success")
+        return redirect(url_for("main.slots_verwalten"))
+
+    slots = FahrstundenSlot.query.order_by(FahrstundenSlot.datum, FahrstundenSlot.uhrzeit).all()
+    return render_template("slots_verwalten.html", fahrzeuge=fahrzeuge, slots=slots)
+
