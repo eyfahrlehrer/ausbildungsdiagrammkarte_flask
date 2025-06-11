@@ -1,0 +1,46 @@
+<!-- templates/slots_buchen.html -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Fahrstunde buchen</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <div class="max-w-4xl mx-auto py-8 px-4">
+        <h1 class="text-2xl font-bold mb-6">Fahrstunde buchen</h1>
+
+        {% if buchungen_diese_woche >= 2 %}
+            <div class="bg-yellow-200 border border-yellow-400 text-yellow-800 p-4 rounded mb-6">
+                Du hast bereits 2 Buchungen in dieser Woche vorgenommen. Weitere Buchungen sind nicht möglich.
+            </div>
+        {% endif %}
+
+        <div class="space-y-4">
+            {% for slot in slots %}
+                <div class="bg-white rounded shadow p-4 flex justify-between items-center">
+                    <div>
+                        <p class="font-semibold">{{ slot.datum.strftime('%d.%m.%Y') }} – {{ slot.uhrzeit.strftime('%H:%M') }}</p>
+                        <p class="text-sm text-gray-600">Fahrzeug: {{ slot.fahrzeug.bezeichnung }}</p>
+                    </div>
+                    <div>
+                        {% if buchungen_diese_woche < 2 %}
+                            <form method="POST" action="{{ url_for('main.fahrstunde_buchen') }}">
+                                <input type="hidden" name="slot_id" value="{{ slot.id }}">
+                                <input type="hidden" name="schueler_id" value="{{ schueler.id }}">
+                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                                    Buchen
+                                </button>
+                            </form>
+                        {% else %}
+                            <p class="text-red-600 font-semibold">Limit erreicht</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-gray-600">Keine freien Slots verfügbar.</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
