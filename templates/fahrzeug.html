@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="max-w-4xl mx-auto mt-10 bg-white p-6 rounded-xl shadow shadow-gray-300">
+<div class="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
   <h2 class="text-2xl font-bold mb-6">Fahrzeuge verwalten</h2>
 
   {% with messages = get_flashed_messages(with_categories=true) %}
@@ -13,70 +13,57 @@
     {% endif %}
   {% endwith %}
 
-  <!-- Neuanlage oder Bearbeitung -->
-  <form method="POST" action="{{ url_for('main.fahrzeuge_verwalten') }}" class="space-y-4 mb-8">
-    <input type="hidden" name="fahrzeug_id" value="{{ bearbeite.id if bearbeite else '' }}">
-    
+  <!-- Neues Fahrzeug hinzufügen -->
+  <form method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
     <div>
-      <label for="bezeichnung" class="block text-sm font-medium">Bezeichnung *</label>
-      <input type="text" name="bezeichnung" id="bezeichnung" class="w-full p-2 border rounded"
-             value="{{ bearbeite.bezeichnung if bearbeite else '' }}">
+      <label class="block text-sm font-medium">Bezeichnung</label>
+      <input type="text" name="bezeichnung" class="w-full p-2 border rounded" required>
     </div>
-
-    <div class="grid grid-cols-2 gap-4">
-      <div>
-        <label for="typ" class="block text-sm font-medium">Typ</label>
-        <select name="typ" id="typ" class="w-full p-2 border rounded">
-          <option value="Schalter" {% if bearbeite and bearbeite.typ == 'Schalter' %}selected{% endif %}>Schalter</option>
-          <option value="Automatik" {% if bearbeite and bearbeite.typ == 'Automatik' %}selected{% endif %}>Automatik</option>
-        </select>
-      </div>
-      <div>
-        <label for="kennzeichen" class="block text-sm font-medium">Kennzeichen</label>
-        <input type="text" name="kennzeichen" id="kennzeichen" class="w-full p-2 border rounded"
-               value="{{ bearbeite.kennzeichen if bearbeite else '' }}">
-      </div>
+    <div>
+      <label class="block text-sm font-medium">Typ</label>
+      <select name="typ" class="w-full p-2 border rounded">
+        <option value="Schalter">Schalter</option>
+        <option value="Automatik">Automatik</option>
+      </select>
     </div>
-
-    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-      {% if bearbeite %}💾 Speichern{% else %}➕ Fahrzeug hinzufügen{% endif %}
-    </button>
-    {% if bearbeite %}
-      <a href="{{ url_for('main.fahrzeuge_verwalten') }}" class="ml-4 text-sm text-gray-500 hover:underline">Abbrechen</a>
-    {% endif %}
+    <div>
+      <label class="block text-sm font-medium">Kennzeichen</label>
+      <input type="text" name="kennzeichen" class="w-full p-2 border rounded">
+    </div>
+    <div class="md:col-span-3 text-right">
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-2">+ Hinzufügen</button>
+    </div>
   </form>
 
-  <hr class="mb-6">
-
-  <h3 class="text-xl font-semibold mb-4">🚘 Fahrzeugliste</h3>
-  {% if fahrzeuge %}
-    <table class="min-w-full table-auto border border-gray-200 text-sm">
-      <thead class="bg-gray-100 text-left">
-        <tr>
-          <th class="px-4 py-2 border-b">Bezeichnung</th>
-          <th class="px-4 py-2 border-b">Typ</th>
-          <th class="px-4 py-2 border-b">Kennzeichen</th>
-          <th class="px-4 py-2 border-b">Aktion</th>
+  <!-- Liste der Fahrzeuge -->
+  <div class="overflow-x-auto">
+    <table class="min-w-full table-auto">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="px-4 py-2 text-left text-sm">Bezeichnung</th>
+          <th class="px-4 py-2 text-left text-sm">Typ</th>
+          <th class="px-4 py-2 text-left text-sm">Kennzeichen</th>
+          <th class="px-4 py-2 text-left text-sm">Aktionen</th>
         </tr>
       </thead>
       <tbody>
-        {% for f in fahrzeuge %}
-        <tr class="hover:bg-gray-50">
-          <td class="px-4 py-2 border-b">{{ f.bezeichnung }}</td>
-          <td class="px-4 py-2 border-b">{{ f.typ or "-" }}</td>
-          <td class="px-4 py-2 border-b">{{ f.kennzeichen or "-" }}</td>
-          <td class="px-4 py-2 border-b">
-            <a href="{{ url_for('main.fahrzeuge_verwalten', edit=f.id) }}" class="text-blue-600 hover:underline mr-2">Bearbeiten</a>
-            <form action="{{ url_for('main.fahrzeug_loeschen', fahrzeug_id=f.id) }}" method="POST" class="inline">
-              <button type="submit" class="text-red-600 hover:underline" onclick="return confirm('Fahrzeug wirklich löschen?')">Löschen</button>
+        {% for fahrzeug in fahrzeuge %}
+        <tr class="border-b hover:bg-gray-100">
+          <td class="px-4 py-2">{{ fahrzeug.bezeichnung }}</td>
+          <td class="px-4 py-2">{{ fahrzeug.typ }}</td>
+          <td class="px-4 py-2">{{ fahrzeug.kennzeichen }}</td>
+          <td class="px-4 py-2">
+            <form method="POST" action="{{ url_for('main.fahrzeug_loeschen', fahrzeug_id=fahrzeug.id) }}" onsubmit="return confirm('Fahrzeug wirklich löschen?');" class="inline">
+              <button type="submit" class="text-red-600 hover:underline mr-4">Löschen</button>
             </form>
+            <a href="{{ url_for('main.fahrzeug_bearbeiten', fahrzeug_id=fahrzeug.id) }}" class="text-blue-600 hover:underline">Bearbeiten</a>
           </td>
         </tr>
+        {% else %}
+        <tr><td colspan="4" class="px-4 py-4 text-center text-gray-500">Keine Fahrzeuge vorhanden.</td></tr>
         {% endfor %}
       </tbody>
     </table>
-  {% else %}
-    <p class="text-gray-600">Noch keine Fahrzeuge vorhanden.</p>
-  {% endif %}
+  </div>
 </div>
 {% endblock %}
