@@ -61,13 +61,43 @@ def create():
     if "user_id" not in session:
         return redirect(url_for("main.login"))
 
+    errors = {}
+
     if request.method == "POST":
+        vorname = request.form.get("vorname", "").strip()
+        nachname = request.form.get("nachname", "").strip()
+        geburtsdatum = request.form.get("geburtsdatum", "").strip()
+        plz = request.form.get("plz", "").strip()
+
+        # 🔍 Validierung
+        if not vorname:
+            errors["vorname"] = "Vorname darf nicht leer sein."
+        if not nachname:
+            errors["nachname"] = "Nachname darf nicht leer sein."
+        if not geburtsdatum:
+            errors["geburtsdatum"] = "Geburtsdatum ist erforderlich."
+        else:
+            try:
+                parsed_datum = date.fromisoformat(geburtsdatum)
+            except ValueError:
+                errors["geburtsdatum"] = "Ungültiges Datum. Format: JJJJ-MM-TT"
+
+        if not plz.isdigit() or len(plz) != 5:
+            errors["plz"] = "PLZ muss genau 5 Ziffern enthalten."
+
+        # 🚫 Fehler → zurück zum Formular
+        if errors:
+            for msg in errors.values():
+                flash(f"⚠️ {msg}", "warning")
+            return render_template("create.html", errors=errors)
+
+        # ✅ Speichern und Weiterleitung zum Profil
         neuer_schueler = Schueler(
-            vorname=request.form.get("vorname"),
-            nachname=request.form.get("nachname"),
-            geburtsdatum=request.form.get("geburtsdatum"),
+            vorname=vorname,
+            nachname=nachname,
+            geburtsdatum=parsed_datum,
             adresse=request.form.get("adresse"),
-            plz=request.form.get("plz"),
+            plz=plz,
             ort=request.form.get("ort"),
             mobilnummer=request.form.get("mobilnummer"),
             sehhilfe=request.form.get("sehhilfe") == "true",
@@ -77,10 +107,11 @@ def create():
         )
         db.session.add(neuer_schueler)
         db.session.commit()
-        flash("👤 Neuer Schüler angelegt", "success")
+        flash("✅ Neuer Schüler erfolgreich angelegt!", "success")
         return redirect(url_for("main.schueler_profil", schueler_id=neuer_schueler.id))
 
-    return render_template("create.html")
+    return render_template("create.html", errors={})
+
 
 # Schülerliste anzeigen
 @main.route("/schueler")
