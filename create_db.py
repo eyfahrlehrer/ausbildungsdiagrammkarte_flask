@@ -1,6 +1,6 @@
 # create_db.py
 
-from app import app, db, User, Rolle
+from app import app, db, User, Rolle, Fahrstundenprotokoll
 from werkzeug.security import generate_password_hash
 
 with app.app_context():
