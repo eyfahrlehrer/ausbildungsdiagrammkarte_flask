@@ -4,17 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Fahrstundenkalender</title>
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css' rel='stylesheet' />
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        #calendar { max-width: 1200px; margin: 40px auto; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9fafb; }
+        #calendar { max-width: 1200px; margin: 40px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         .fc-toolbar-title { font-size: 1.5rem; }
+        .fc-button { font-weight: bold; }
     </style>
 </head>
 <body>
-    <div id='calendar'></div>
+    <div id="calendar"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -32,20 +33,29 @@
                     center: 'title',
                     right: 'timeGridDay,timeGridWeek,listWeek'
                 },
-                events: '/api/slots', // wird in Flask als JSON geliefert
-                eventColor: '#0099cc',
+                events: '/api/slots', // Flask liefert JSON
                 eventClick: function(info) {
-                    if (info.event.extendedProps.status === 'frei') {
+                    const status = info.event.extendedProps.status;
+                    const slotId = info.event.id;
+                    if (status === 'offen') {
                         if (confirm(`Möchtest du den Slot am ${info.event.start.toLocaleString()} buchen?`)) {
-                            window.location.href = `/slot-buchen/${info.event.id}`;
+                            window.location.href = `/slot-buchen/${slotId}`;
                         }
+                    } else if (info.event.url) {
+                        window.location.href = info.event.url;
                     }
                 },
                 eventDidMount: function(info) {
                     const status = info.event.extendedProps.status;
-                    if (status === 'vergeben') info.el.style.backgroundColor = '#e74c3c';
-                    if (status === 'angefragt') info.el.style.backgroundColor = '#f39c12';
-                    if (status === 'frei') info.el.style.backgroundColor = '#2ecc71';
+                    if (status === 'offen') {
+                        info.el.style.backgroundColor = '#10b981'; // grün
+                    } else if (status === 'reserviert') {
+                        info.el.style.backgroundColor = '#f59e0b'; // orange
+                    } else if (status === 'bestätigt') {
+                        info.el.style.backgroundColor = '#ef4444'; // rot
+                    }
+                    info.el.style.color = '#fff';
+                    info.el.style.border = '1px solid #111827';
                 }
             });
 
