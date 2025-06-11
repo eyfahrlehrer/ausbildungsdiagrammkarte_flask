@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for, session, flash
 from . import main
 from models import db, Schueler, Fahrstundenprotokoll, Fahrzeug
-from datetime import date
+from datetime import datetime, date
 
 # Globale Template-Funktion zur Altersberechnung
 @main.app_template_global()
@@ -11,29 +11,30 @@ def berechne_alter(geburtsdatum):
     today = date.today()
     return today.year - geburtsdatum.year - ((today.month, today.day) < (geburtsdatum.month, geburtsdatum.day))
 
-# Startseite → Weiterleitung zum Login
+# Startseite → Login
 @main.route("/")
 def home():
     return redirect(url_for("main.login"))
 
-# Login (Dummy für Entwicklung)
 @main.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         nutzername = request.form.get("nutzername")
         passwort = request.form.get("passwort")
-
         if nutzername == "admin" and passwort == "admin":
             session["user_id"] = 1
             session["rolle_id"] = 1
             flash("✅ Willkommen zurück!", "success")
             return redirect(url_for("main.dashboard"))
-        else:
-            flash("❌ Ungültige Anmeldedaten", "danger")
-
+        flash("❌ Ungültige Anmeldedaten", "danger")
     return render_template("login.html")
 
-# Dashboard mit Live-Statistik + letzte Protokolle
+@main.route("/logout")
+def logout():
+    session.clear()
+    flash("🚪 Abgemeldet", "info")
+    return redirect(url_for("main.login"))
+
 @main.route("/dashboard")
 def dashboard():
     if "user_id" not in session:
@@ -43,11 +44,9 @@ def dashboard():
     bestandene = Schueler.query.filter_by(theorie_bestanden=True).count()
     offene_sonderfahrten = Fahrstundenprotokoll.query.filter(Fahrstundenprotokoll.sonderfahrt_typ != None).count()
     heutige_termine = Fahrstundenprotokoll.query.filter_by(datum=date.today().isoformat()).count()
-
     letzte_protokolle = Fahrstundenprotokoll.query.order_by(Fahrstundenprotokoll.datum.desc()).limit(5).all()
 
-    return render_template(
-        "dashboard.html",
+    return render_template("dashboard.html", 
         anzahl_schueler=anzahl_schueler,
         bestandene=bestandene,
         offene_sonderfahrten=offene_sonderfahrten,
@@ -55,21 +54,18 @@ def dashboard():
         letzte_protokolle=letzte_protokolle
     )
 
-# Neue Schüler anlegen → Weiterleitung ins Profil
 @main.route("/create", methods=["GET", "POST"])
 def create():
     if "user_id" not in session:
         return redirect(url_for("main.login"))
 
     errors = {}
-
     if request.method == "POST":
         vorname = request.form.get("vorname", "").strip()
         nachname = request.form.get("nachname", "").strip()
         geburtsdatum = request.form.get("geburtsdatum", "").strip()
         plz = request.form.get("plz", "").strip()
 
-        # 🔍 Validierung
         if not vorname:
             errors["vorname"] = "Vorname darf nicht leer sein."
         if not nachname:
@@ -81,17 +77,14 @@ def create():
                 parsed_datum = date.fromisoformat(geburtsdatum)
             except ValueError:
                 errors["geburtsdatum"] = "Ungültiges Datum. Format: JJJJ-MM-TT"
-
         if not plz.isdigit() or len(plz) != 5:
             errors["plz"] = "PLZ muss genau 5 Ziffern enthalten."
 
-        # 🚫 Fehler → zurück zum Formular
         if errors:
             for msg in errors.values():
                 flash(f"⚠️ {msg}", "warning")
             return render_template("create.html", errors=errors)
 
-        # ✅ Speichern und Weiterleitung zum Profil
         neuer_schueler = Schueler(
             vorname=vorname,
             nachname=nachname,
@@ -112,27 +105,23 @@ def create():
 
     return render_template("create.html", errors={})
 
-# Schülerliste anzeigen
 @main.route("/schueler")
 def schueler_liste():
     if "user_id" not in session:
         return redirect(url_for("main.login"))
 
     schueler = Schueler.query.order_by(Schueler.nachname.asc()).all()
-    daten = []
-    for s in schueler:
-        daten.append({
-            "id": s.id,
-            "geschlecht": s.geschlecht,
-            "alter": berechne_alter(s.geburtsdatum),
-            "vorname": s.vorname,
-            "nachname": s.nachname,
-            "klasse": s.fahrerlaubnisklasse
-        })
+    daten = [{
+        "id": s.id,
+        "geschlecht": s.geschlecht,
+        "alter": berechne_alter(s.geburtsdatum),
+        "vorname": s.vorname,
+        "nachname": s.nachname,
+        "klasse": s.fahrerlaubnisklasse
+    } for s in schueler]
 
     return render_template("alle_schueler.html", schueler=daten)
 
-# Schülerprofil anzeigen
 @main.route("/profil/<int:schueler_id>")
 def schueler_profil(schueler_id):
     if "user_id" not in session:
@@ -140,10 +129,8 @@ def schueler_profil(schueler_id):
 
     schueler = Schueler.query.get_or_404(schueler_id)
     protokolle = Fahrstundenprotokoll.query.filter_by(schueler_id=schueler.id).order_by(Fahrstundenprotokoll.datum.desc()).all()
-
     return render_template("profil.html", schueler=schueler, protokolle=protokolle)
 
-# Fahrzeuge verwalten inkl. Bearbeiten und Löschen
 @main.route("/fahrzeuge", methods=["GET", "POST"])
 def fahrzeuge_verwalten():
     if "user_id" not in session:
@@ -171,11 +158,7 @@ def fahrzeuge_verwalten():
                     fzg.kennzeichen = kennzeichen
                     flash("✏️ Fahrzeug aktualisiert!", "success")
             else:
-                neues_fahrzeug = Fahrzeug(
-                    bezeichnung=bezeichnung,
-                    typ=typ,
-                    kennzeichen=kennzeichen
-                )
+                neues_fahrzeug = Fahrzeug(bezeichnung=bezeichnung, typ=typ, kennzeichen=kennzeichen)
                 db.session.add(neues_fahrzeug)
                 flash("🚗 Neues Fahrzeug hinzugefügt!", "success")
             db.session.commit()
@@ -195,9 +178,25 @@ def fahrzeug_loeschen(fahrzeug_id):
     flash("🗑️ Fahrzeug gelöscht.", "info")
     return redirect(url_for("main.fahrzeuge_verwalten"))
 
-# Logout
-@main.route("/logout")
-def logout():
-    session.clear()
-    flash("🚪 Abgemeldet", "info")
-    return redirect(url_for("main.login"))
+@main.route("/fahrzeug-verfuegbarkeit", methods=["GET"])
+def fahrzeug_verfuegbarkeit():
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    ausgewaehltes_datum = request.args.get("datum")
+    if ausgewaehltes_datum:
+        try:
+            datum_obj = datetime.strptime(ausgewaehltes_datum, "%Y-%m-%d").date()
+        except ValueError:
+            flash("❗ Ungültiges Datum", "warning")
+            datum_obj = date.today()
+    else:
+        datum_obj = date.today()
+
+    fahrzeuge = Fahrzeug.query.all()
+    belegungen = {
+        f.id: Fahrstundenprotokoll.query.filter_by(datum=datum_obj, fahrzeug_id=f.id).order_by(Fahrstundenprotokoll.uhrzeit).all()
+        for f in fahrzeuge
+    }
+
+    return render_template("fahrzeug_verfuegbarkeit.html", fahrzeuge=fahrzeuge, belegungen=belegungen, datum=datum_obj.strftime("%Y-%m-%d"))
