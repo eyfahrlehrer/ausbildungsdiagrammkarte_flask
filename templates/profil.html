@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+# Datei mit der HTML-Vorlage für die Profilseite speichern
+profil_html_content = """<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -104,3 +105,9 @@
     </div>
 </body>
 </html>
+"""
+
+with open("/mnt/data/profil.html", "w", encoding="utf-8") as f:
+    f.write(profil_html_content)
+
+"/mnt/data/profil.html"
