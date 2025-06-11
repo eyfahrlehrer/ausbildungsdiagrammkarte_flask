@@ -93,4 +93,66 @@
     </div>
   </form>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  function showError(input, message) {
+    let error = input.parentElement.querySelector(".error-text");
+    if (!error) {
+      error = document.createElement("p");
+      error.className = "text-red-500 text-sm mt-1 error-text";
+      input.parentElement.appendChild(error);
+    }
+    error.textContent = message;
+    input.classList.add("border-red-500");
+  }
+
+  function clearError(input) {
+    let error = input.parentElement.querySelector(".error-text");
+    if (error) error.remove();
+    input.classList.remove("border-red-500");
+  }
+
+  ["vorname", "nachname"].forEach(id => {
+    let field = document.getElementById(id);
+    field.addEventListener("input", () => {
+      if (field.value.trim() === "") {
+        showError(field, "Dieses Feld ist erforderlich.");
+      } else {
+        clearError(field);
+      }
+    });
+  });
+
+  let geburtsdatum = document.getElementById("geburtsdatum");
+  geburtsdatum.addEventListener("change", () => {
+    const entered = new Date(geburtsdatum.value);
+    const today = new Date();
+    if (entered > today) {
+      showError(geburtsdatum, "Geburtsdatum darf nicht in der Zukunft liegen.");
+    } else {
+      clearError(geburtsdatum);
+    }
+  });
+
+  let plz = document.getElementById("plz");
+  plz.addEventListener("input", () => {
+    if (!/^\d{5}$/.test(plz.value)) {
+      showError(plz, "PLZ muss aus 5 Ziffern bestehen.");
+    } else {
+      clearError(plz);
+    }
+  });
+
+  let mobilnummer = document.getElementById("mobilnummer");
+  mobilnummer.addEventListener("input", () => {
+    let clean = mobilnummer.value.replace(/\D/g, "");
+    if (!/^1\d{4,14}$/.test(clean)) {
+      showError(mobilnummer, "Ungültige Nummer. Ohne 0 eingeben, z.B. 1712345678");
+    } else {
+      clearError(mobilnummer);
+    }
+  });
+});
+</script>
 {% endblock %}
