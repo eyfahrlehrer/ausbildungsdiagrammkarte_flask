@@ -1,0 +1,54 @@
+<!-- templates/fahrzeuge.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto mt-10">
+  <h1 class="text-3xl font-bold mb-6">🚗 Fahrzeugverwaltung</h1>
+
+  <!-- Neueingabe -->
+  <form action="{{ url_for('main.fahrzeug_erstellen') }}" method="POST" class="bg-white p-6 rounded shadow mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-sm font-medium">Bezeichnung</label>
+        <input name="bezeichnung" class="w-full p-2 border rounded" required>
+      </div>
+      <div>
+        <label class="block text-sm font-medium">Typ</label>
+        <select name="typ" class="w-full p-2 border rounded">
+          <option value="Schalter">Schalter</option>
+          <option value="Automatik">Automatik</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium">Kennzeichen</label>
+        <input name="kennzeichen" class="w-full p-2 border rounded">
+      </div>
+    </div>
+    <button class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">➕ Fahrzeug anlegen</button>
+  </form>
+
+  <!-- Liste -->
+  <div class="bg-white p-6 rounded shadow">
+    <h2 class="text-xl font-semibold mb-4">🗂️ Alle Fahrzeuge</h2>
+    <table class="table-auto w-full text-sm">
+      <thead>
+        <tr class="bg-gray-100 text-left">
+          <th class="px-4 py-2">Bezeichnung</th>
+          <th class="px-4 py-2">Typ</th>
+          <th class="px-4 py-2">Kennzeichen</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for fzg in fahrzeuge %}
+        <tr class="border-t">
+          <td class="px-4 py-2">{{ fzg.bezeichnung }}</td>
+          <td class="px-4 py-2">{{ fzg.typ }}</td>
+          <td class="px-4 py-2">{{ fzg.kennzeichen }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" class="text-gray-500 px-4 py-2">Noch keine Fahrzeuge erfasst.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
