@@ -4,19 +4,33 @@
     <meta charset="UTF-8">
     <title>{% block title %}Fahrschule Admin{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <div class="flex min-h-screen">
-        <!-- Sidebar -->
-        {% include 'sidebar.html' %}
+<div class="flex h-screen" x-data="{ open: false }">
 
-        <!-- Main Content -->
-        <main class="flex-1 p-6 overflow-auto">
-            {% block content %}{% endblock %}
-        </main>
+    <!-- Mobile Top Bar -->
+    <div class="md:hidden bg-white shadow p-4 w-full flex justify-between items-center">
+        <span class="font-bold text-blue-600">🚘 Fahrschule</span>
+        <button @click="open = !open" class="text-2xl focus:outline-none">☰</button>
     </div>
+
+    <!-- Sidebar -->
+    <div 
+        class="bg-white w-64 p-4 border-r shadow-md flex-shrink-0 md:block" 
+        :class="{ 'hidden': !open, 'block': open }" 
+        x-cloak>
+        {% include 'sidebar.html' %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 overflow-auto w-full">
+        {% block content %}{% endblock %}
+    </main>
+
+</div>
 
 </body>
 </html>
