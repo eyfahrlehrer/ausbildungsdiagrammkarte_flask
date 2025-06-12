@@ -1,36 +1,46 @@
+<!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Fahrschule Admin{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% block head %}{% endblock %}
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-100 text-gray-800">
 
-<div class="flex h-screen" x-data="{ open: false }">
+    <!-- 🔔 Flash-Meldungen -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="fixed top-4 left-1/2 transform -translate-x-1/2 w-full max-w-md z-50">
+                {% for category, message in messages %}
+                    <div class="mb-2 p-4 rounded shadow-md text-sm
+                        {% if category == 'success' %}bg-green-100 text-green-800 border-l-4 border-green-500
+                        {% elif category == 'danger' %}bg-red-100 text-red-800 border-l-4 border-red-500
+                        {% elif category == 'info' %}bg-blue-100 text-blue-800 border-l-4 border-blue-500
+                        {% else %}bg-gray-100 text-gray-800 border-l-4 border-gray-400{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
 
-    <!-- Mobile Top Bar -->
-    <div class="md:hidden bg-white shadow p-4 w-full flex justify-between items-center">
-        <span class="font-bold text-blue-600">🚘 Fahrschule</span>
-        <button @click="open = !open" class="text-2xl focus:outline-none">☰</button>
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        {% include "sidebar.html" %}
+
+        <!-- Hauptbereich -->
+        <main class="flex-1 p-6 overflow-auto">
+            {% block content %}
+            <!-- Seiteninhalt -->
+            {% endblock %}
+        </main>
     </div>
 
-    <!-- Sidebar -->
-    <div 
-        class="bg-white w-64 p-4 border-r shadow-md flex-shrink-0 md:block" 
-        :class="{ 'hidden': !open, 'block': open }" 
-        x-cloak>
-        {% include 'sidebar.html' %}
-    </div>
-
-    <!-- Main Content -->
-    <main class="flex-1 p-6 overflow-auto w-full">
-        {% block content %}{% endblock %}
-    </main>
-
-</div>
-
+    {% block scripts %}
+    <!-- Zusätzliche Scripts, z. B. Kalender, Charts etc. -->
+    {% endblock %}
 </body>
 </html>
