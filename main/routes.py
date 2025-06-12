@@ -192,3 +192,8 @@ def slot_buchen(slot_id):
     db.session.commit()
     flash("📆 Anfrage gespeichert", "success")
     return redirect(url_for("main.schueler_profil", schueler_id=schueler_id))
+
+@main.route("/fahrzeuge")
+def fahrzeuge_verwalten():
+    return render_template("fahrzeuge.html")
+
